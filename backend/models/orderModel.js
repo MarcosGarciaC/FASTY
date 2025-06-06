@@ -84,7 +84,7 @@ const orderSchema = new Schema({
 
   feedback: {
     type: String,
-    default: '',
+    default: ''
   },
 
   created_at: {
