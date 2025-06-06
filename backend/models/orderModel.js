@@ -30,7 +30,7 @@ const orderSchema = new Schema({
       },
       price: {
         type: Number,
-        required: true,
+        required: false,
         min: 0
       },
       special_instructions: {
