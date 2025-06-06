@@ -1,0 +1,174 @@
+.add {
+  width: 70%;
+  margin-left: max(5vw, 25px);
+  margin-top: 50px;
+  color: #333;
+  font-size: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.add form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  background-color: #fafafa;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.add-img-upload {
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.add-img-upload label {
+  cursor: pointer;
+  color: #555;
+  transition: color 0.3s;
+}
+
+.add-img-upload label:hover {
+  color: #000;
+}
+
+.add-img-upload img {
+  width: 120px;
+  margin-top: 10px;
+}
+
+.add-product-name,
+.add-product-description {
+  width: 100%;
+}
+
+.add-product-name input,
+.add-product-description textarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  width: 100%;
+  resize: none;
+  background-color: #fff;
+}
+
+.add-category-price {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.add-category-price select,
+.add-category-price input {
+  max-width: 180px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 15px;
+}
+
+.add-btn {
+  max-width: 150px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #000;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-btn:hover {
+  background-color: #333;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-img-upload img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  transition: transform 0.3s ease;
+}
+
+.add-img-upload img:hover {
+  transform: scale(1.05);
+}
+
+/* Estilo para inputs generales */
+.add input[type="text"],
+.add input[type="number"],
+.add textarea,
+.add select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.add input[type="text"]:focus,
+.add input[type="number"]:focus,
+.add textarea:focus,
+.add select:focus {
+  border-color: #888;
+  outline: none;
+}
+
+/* Ajuste para sección de textarea de ingredientes */
+.add textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* Estilo para checkbox */
+.add input[type="checkbox"] {
+  margin-right: 8px;
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+/* Estilo para etiqueta del checkbox */
+.add label {
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Contenedor de inputs como "preparation time", "daily quantity", etc. */
+.add .flex-col input {
+  max-width: 300px;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .add {
+    width: 90%;
+    margin: 20px auto;
+  }
+
+  .add-category-price {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .add-btn {
+    width: 100%;
+    max-width: none;
+  }
+}
+

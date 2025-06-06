@@ -1,0 +1,118 @@
+.food-item {
+  width: 100%;
+  margin: 15px auto;
+  border-radius: 15px;
+  box-shadow: 0px 0px 10px #00000015;
+  transition: 0.3s;
+  animation: fadeIn 1s;
+  display: flex;
+  align-items: flex-start;
+  padding: 15px;
+  gap: 20px;
+  background: white;
+  position: relative; /* Para posicionamiento relativo si es necesario */
+}
+
+.food-item-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 15px;
+  object-fit: cover;
+}
+
+.food-item-img-container {
+  flex-shrink: 0;
+}
+
+.food-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+.food-item-name-rating {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.food-item-name {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.food-item-rating {
+  background: #f8f8f8;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.food-item-desc {
+  margin: 0;
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  flex-grow: 1; /* Empuja el contenido hacia abajo */
+}
+
+.food-item-bottom {
+  display: flex;
+  justify-content: space-between; /* Precio a la izquierda, botones a la derecha */
+  align-items: center;
+  margin-top: auto; /* Lo coloca al final del contenedor */
+}
+
+.food-item-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f2b529;
+  margin: 0;
+}
+
+.add_minus-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.food-item-counter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add_minus-icons i, 
+.food-item-counter i {
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+  background: #f8f8f8;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.add_minus-icons i:hover, 
+.food-item-counter i:hover {
+  background: #f2b529;
+  color: white;
+}
+
+.item-count {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+.food-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 5px 15px #00000020;
+}

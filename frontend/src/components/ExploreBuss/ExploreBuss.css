@@ -1,0 +1,56 @@
+.explore-buss{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 20px 100px;
+}
+
+.explore-buss h1{
+  color: #262626;
+  font-weight: 500;
+}
+
+.explore-buss__list{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 50px;
+  text-align: center;
+  margin: 20px 0px;
+  overflow-x: scroll;
+}
+
+.explore-buss__list::-webkit-scrollbar{
+  display: none;
+}
+
+.explore-buss-list__items img{
+  width: 7.5vw;
+  min-width: 80px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+.explore-buss-list__items p{
+  margin-top: 10px;
+  color: #747474;
+  font-size: max(1.4vw,10px);
+  cursor: pointer;
+}
+
+.explore-buss-list__items .active{
+  border: 4px solid #F4BD20;
+  padding: 2px;
+}
+@media (max-width: 1050px){
+  .explore-buss-list__items p{
+    margin-top: 10px;
+    font-size: max(5vw,20px);
+  }
+  .explore-buss-list__items img{
+    width: 13vw;
+    min-width: 100px;
+  }
+}
+

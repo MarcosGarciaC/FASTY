@@ -1,0 +1,94 @@
+/* List.css */
+.list {
+    width: 100%;
+    max-width: 95vw; /* Cambiado a viewport width */
+    margin: 2rem 50px; /* Corregido el valor 50 que no tenía unidad */
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+}
+
+.list p:first-child {
+    font-size: clamp(1.4rem, 4vw, 1.8rem); /* Tamaño responsive */
+    font-weight: 600;
+    color: #323232;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #F4BD20;
+    text-align: center;
+}
+
+.list-table {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Mejor scroll en móviles */
+}
+
+.list-table-format {
+    display: grid;
+    grid-template-columns: minmax(80px, 100px) minmax(120px, 1fr) minmax(120px, 1fr) minmax(80px, 0.8fr) minmax(150px, 2fr) minmax(40px, 0.5fr);
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+    min-width: 800px; /* Ancho mínimo para evitar compresión */
+}
+
+.list-table-format:hover {
+    background-color: #f9f9f9;
+}
+
+.list-table-format.title {
+    background-color: #323232;
+    color: white;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 1rem;
+    position: sticky;
+    left: 0;
+}
+
+.list-table-format img {
+    width: 100%;
+    max-width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #F4BD20;
+}
+
+.list-table-format p {
+    margin: 0;
+    color: #323232;
+    font-size: clamp(0.8rem, 2vw, 0.95rem);
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.list-table-format p:nth-child(3) {
+    text-transform: capitalize;
+}
+
+.list-table-format p:nth-child(4) {
+    font-weight: 600;
+    color: #BA0505;
+    white-space: nowrap;
+}
+
+.list-table-format p:last-child {
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    transition: transform 0.2s, color 0.2s;
+    cursor: pointer;
+}
+
+.list-table-format p:last-child:hover {
+    color: #e93312;
+    transform: scale(1.2);
+}
+
