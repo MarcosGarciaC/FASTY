@@ -79,13 +79,12 @@ const orderSchema = new Schema({
     type: Number,
     min: 1,
     max: 5,
-    required: false
+    default: 0
   },
 
   feedback: {
     type: String,
     default: '',
-    required: false
   },
 
   created_at: {
