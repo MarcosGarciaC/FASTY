@@ -18,10 +18,11 @@ const createOrder = async (req, res) => {
 
     await order.save();
     res.json({ success: true, message: "Order created successfully", data: order });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, message: "Error creating order" });
-  }
+catch (error) {
+  console.error('Create Order Error:', error)
+  res.status(500).json({ success: false, message: "Error creating order", error: error.message })
+}
+
 };
 
 // Obtener todas las órdenes filtradas por cafeteria_id

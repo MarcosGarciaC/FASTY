@@ -78,12 +78,14 @@ const orderSchema = new Schema({
   rating: {
     type: Number,
     min: 1,
-    max: 5
+    max: 5,
+    required: false
   },
 
   feedback: {
     type: String,
-    default: ''
+    default: '',
+    required: false
   },
 
   created_at: {
