@@ -155,7 +155,7 @@ const Cart = () => {
                     {[1, 2, 3, 4, 5].map((star) => (
                       <span
                         key={star}
-                        className={star <= rating ? 'filled' : ''}
+                        className={star <= rating ? 'filled' : 0}
                         onClick={() => setRating(star)}
                         style={{
                           cursor: 'pointer',
