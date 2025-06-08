@@ -23,7 +23,7 @@ const Cart = () => {
   // Validar el tiempo de recogida
   const validatePickupTime = (time) => {
     if (!time) {
-      setValidationError('Please select a pickup time')
+      setValidationError('Por favor seleccione una hora de retiro')
       return false
     }
     
@@ -32,7 +32,7 @@ const Cart = () => {
     minTime.setMinutes(minTime.getMinutes() + 15)
     
     if (selectedTime < minTime.getTime()) {
-      setValidationError('Pickup time must be at least 15 minutes from now')
+      setValidationError('La hora de retiro debe ser al menos 15 min después de ahora')
       return false
     }
     
@@ -78,12 +78,12 @@ const Cart = () => {
       <div className='cart-container'>
         <div className='cart-items'>
           <div className="cart-items-title">
-            <p>Item</p>
-            <p>Title</p>
-            <p>Price</p>
-            <p>Quantity</p>
+            <p></p>
+            <p>Nombre</p>
+            <p>Precio</p>
+            <p>Cantidad</p>
             <p>Total</p>
-            <p>Remove</p>
+            <p>Remover</p>
           </div>
           <hr />
 
@@ -108,7 +108,7 @@ const Cart = () => {
 
         <div className='cart-bottom'>
           <div className="cart-total">
-            <h2>Cart Totals</h2>
+            <h2>Total del carrito</h2>
             <div className="cart-total-details-container">
               <div className="cart-total-details">
                 <p>Subtotal</p>
@@ -116,7 +116,7 @@ const Cart = () => {
               </div>
               <hr />
               <div className="cart-total-details">
-                <p>Delivery Fee</p>
+                <p>Precio de pre orden</p>
                 <p>${getTotalCartAmount()===0?0:deliveryFee.toFixed(2)}</p>
               </div>
               <hr />
@@ -129,7 +129,7 @@ const Cart = () => {
             {/* Campos adicionales */}
             <div className="additional-fields">
               <div className="pickup-time">
-                <label htmlFor="pickupTime">Pickup Time:</label>
+                <label htmlFor="pickupTime">Hora de retiro:</label>
                 <input
                   type="datetime-local"
                   id="pickupTime"
@@ -144,7 +144,7 @@ const Cart = () => {
                   </p>
                 )}
                 <p className="time-note" style={{fontSize: '0.8rem', color: '#555'}}>
-                  Please select a time at least 15 minutes from now
+                  Por favor seleccione un tiempo de al menos 15 minutos desde ahora
                 </p>
               </div>
               
@@ -170,12 +170,12 @@ const Cart = () => {
                 </div>
                 
                 <div className="feedback">
-                  <label htmlFor="feedback">Feedback (optional):</label>
+                  <label htmlFor="feedback">Notas para el producto (optional):</label>
                   <textarea
                     id="feedback"
                     value={feedback}
                     onChange={(e) => setFeedback(e.target.value)}
-                    placeholder="Any special instructions or feedback..."
+                    placeholder="Escribe tus notas especiales para el producto..."
                     rows="3"
                     style={{
                       width: '100%',
@@ -197,16 +197,16 @@ const Cart = () => {
                 cursor: getTotalCartAmount() === 0 || !!validationError ? 'not-allowed' : 'pointer'
               }}
             >
-              PROCEED TO CHECKOUT
+              PROCEDER A CHECKOUT
             </button>
           </div>
 
           <div className="cart-promocode">
-            <p className='promo-text'>If you have a promo code, Enter it here!</p>
+            <p className='promo-text'>Si tienes un código de promoción ponlo aqui!</p>
             <div className="cart-promocode-input">
               <input 
                 type='text' 
-                placeholder='promo code' 
+                placeholder='Código de promo' 
                 style={{
                   padding: '8px',
                   border: '1px solid #ddd',
@@ -224,7 +224,7 @@ const Cart = () => {
                   cursor: 'pointer'
                 }}
               >
-                Apply
+                Aplicar
               </button>
             </div>
           </div>
