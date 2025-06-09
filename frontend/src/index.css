@@ -6,9 +6,12 @@
   font-family: Outfit;
   scroll-behavior: smooth;
 }
-body{
-  min-width: 100vh;
+body, html, #root {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
 }
+
 a{
   text-decoration: none;
   color: inherit;
@@ -42,3 +45,4 @@ a{
     opacity: 1;
   }
 }
+
