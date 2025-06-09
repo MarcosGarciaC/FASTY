@@ -15,7 +15,6 @@ const createOrder = async (req, res) => {
       feedback: req.body.feedback
     });
 
-
     await order.save();
     res.json({ success: true, message: "Order created successfully", data: order });
   } catch (error) {
@@ -29,9 +28,9 @@ const getOrdersByCafeteria = async (req, res) => {
   try {
     const { cafeteria_id } = req.params;
     const orders = await orderModel.find({ cafeteria_id })
-      .populate('user_id', 'name email') // Popula información básica del usuario
-      .populate('cafeteria_id', 'name') // Popula información básica de la cafetería
-      .populate('items.food_id', 'name price'); // Popula información básica de los alimentos
+      .populate('user_id', 'name email')
+      .populate('cafeteria_id', 'name')
+      .populate('items.food_id', 'name price');
 
     res.json({ success: true, data: orders });
   } catch (error) {
@@ -46,7 +45,6 @@ const updateOrderStatus = async (req, res) => {
     const { order_id } = req.params;
     const { status } = req.body;
 
-    // Validar que el estado sea uno de los permitidos
     const validStatuses = ['pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ success: false, message: "Invalid status value" });
@@ -55,7 +53,7 @@ const updateOrderStatus = async (req, res) => {
     const updatedOrder = await orderModel.findByIdAndUpdate(
       order_id,
       { status },
-      { new: true } // Devuelve el documento actualizado
+      { new: true }
     );
 
     if (!updatedOrder) {
@@ -89,4 +87,22 @@ const getOrderDetails = async (req, res) => {
   }
 };
 
-export { createOrder, getOrdersByCafeteria, updateOrderStatus, getOrderDetails };
+// Obtener todas las órdenes de un usuario
+const getOrdersByUser = async (req, res) => {
+  try {
+    const { user_id } = req.body;
+    if (!user_id) {
+      return res.status(400).json({ success: false, message: "user_id is required" });
+    }
+    const orders = await orderModel.find({ user_id })
+      .populate('user_id', 'name email')
+      .populate('cafeteria_id', 'name')
+      .populate('items.food_id', 'name price');
+    res.json({ success: true, data: orders });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Error fetching user orders" });
+  }
+};
+
+export { createOrder, getOrdersByCafeteria, updateOrderStatus, getOrderDetails, getOrdersByUser };

@@ -6,20 +6,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import { StoreContext } from '../../context/StoreContext';
 
 const Navbar = ({ setShowLogin }) => {
-
   const [menu, setMenu] = useState("home");
-  const {getTotalCartAmount, token, setToken} = useContext(StoreContext);
-
+  const { getTotalCartAmount, token, setToken } = useContext(StoreContext);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
-
-  const logout = ()=>{
+  const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user_id"); // Agregado para mantener consistencia con Order.jsx
     setToken("");
-    navigate("/")
-  }
+    navigate("/");
+  };
 
   return (
     <div className='navbar'>
@@ -65,13 +63,11 @@ const Navbar = ({ setShowLogin }) => {
 
         <ul className='navbar-actions'>
           <li className='action-item cart-item'>
-            <div className={getTotalCartAmount()===0?"":"notification-dot"}></div>
-
+            <div className={getTotalCartAmount() === 0 ? "" : "notification-dot"}></div>
             <Link to="/cart" className="action-button">
               <i className="fa-solid fa-cart-shopping"></i>
               <span>Cart</span>
             </Link>
-
           </li>
           <li className='action-item'>
             <button
@@ -83,23 +79,32 @@ const Navbar = ({ setShowLogin }) => {
             </button>
           </li>
           <li className='action-item'>
-            {!token?<button className='action-button' onClick={() => setShowLogin(true)}>
-              <i className="fa-regular fa-user"></i>
-              <span>Profile</span>
-            </button>
-            :<div className='navbar-profile'>
-              <i class="fa-regular fa-user"></i>
-              <ul className="nav-profile-dropdown">
-                <li><i class="fa-solid fa-bag-shopping"></i><p>Orders</p></li>
-                <hr/>
-                <li onClick={logout}><i class="fa-solid fa-right-from-bracket"></i><p>Logout</p></li>
-              </ul>
-            </div>}
+            {!token ? (
+              <button className='action-button' onClick={() => setShowLogin(true)}>
+                <i className="fa-regular fa-user"></i>
+                <span>Profile</span>
+              </button>
+            ) : (
+              <div className='navbar-profile'>
+                <i className="fa-regular fa-user"></i>
+                <ul className="nav-profile-dropdown">
+                  <li onClick={() => navigate('/orders')}>
+                    <i className="fa-solid fa-bag-shopping"></i>
+                    <p>Orders</p>
+                  </li>
+                  <hr />
+                  <li onClick={logout}>
+                    <i className="fa-solid fa-right-from-bracket"></i>
+                    <p>Logout</p>
+                  </li>
+                </ul>
+              </div>
+            )}
           </li>
         </ul>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
