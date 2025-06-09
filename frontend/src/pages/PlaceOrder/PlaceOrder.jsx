@@ -15,18 +15,10 @@ const PlaceOrder = () => {
 
   
   // Estado para los datos del formulario
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    street: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: '',
-    phone: '',
-    paymentMethod: 'cash' // Valor por defecto
-  })
+const [formData] = useState({
+  paymentMethod: 'cash'
+})
+
 
   // Manejar cambios en los inputs
   const handleChange = (e) => {
@@ -120,7 +112,7 @@ const PlaceOrder = () => {
 
   return (
     <form className='place-order' onSubmit={handleSubmit}>
-      <div className="place-order-left">
+     {/* <div className="place-order-left">
         <p className='title'>Order Information</p>
         <div className="multi-fields">
           <input 
@@ -213,11 +205,11 @@ const PlaceOrder = () => {
             <option value="university_card">University Card</option>
           </select>
         </div>
-      </div>
+      </div> */}
       
       <div className="place-order-right">
         <div className="cart-total">
-          <h2>Cart Totals</h2>
+          <h2>Total a pagar</h2>
           <div className="cart-total-details-container">
             <div className="cart-total-details">
               <p>Subtotal</p>
@@ -225,7 +217,7 @@ const PlaceOrder = () => {
             </div>
             <hr />
             <div className="cart-total-details">
-              <p>Delivery Fee</p>
+              <p>Precio de Pre orden</p>
               <p>${getTotalCartAmount()===0 ? 0 : deliveryFee.toFixed(2)}</p>
             </div>
             <hr />
@@ -234,7 +226,7 @@ const PlaceOrder = () => {
               <b>${(getTotalCartAmount()===0 ? 0 : getTotalCartAmount()+deliveryFee).toFixed(2)}</b>
             </div>
           </div>
-          <button type="submit" className='checkout-btn'>PROCEED TO CHECKOUT</button>
+          <button type="submit" className='checkout-btn'>CONFIRMAR LA ORDEN</button>
         </div>
       </div>
     </form>

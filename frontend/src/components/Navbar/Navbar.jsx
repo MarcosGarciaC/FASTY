@@ -40,7 +40,7 @@ const Navbar = ({ setShowLogin }) => {
             onClick={() => setMenu("contact-us")}
             className={`nav-item ${menu === "contact-us" ? "active" : ""}`}
           >
-            <a href='#footer'>Contact Us</a>
+            <a href='#footer'>Contactanos</a>
           </li>
         </ul>
       </div>
@@ -66,17 +66,8 @@ const Navbar = ({ setShowLogin }) => {
             <div className={getTotalCartAmount() === 0 ? "" : "notification-dot"}></div>
             <Link to="/cart" className="action-button">
               <i className="fa-solid fa-cart-shopping"></i>
-              <span>Cart</span>
+              <span>Carrito</span>
             </Link>
-          </li>
-          <li className='action-item'>
-            <button
-              className='action-button'
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-            >
-              <i className="fa-solid fa-magnifying-glass"></i>
-              <span>Search</span>
-            </button>
           </li>
           <li className='action-item'>
             {!token ? (
@@ -90,12 +81,12 @@ const Navbar = ({ setShowLogin }) => {
                 <ul className="nav-profile-dropdown">
                   <li onClick={() => navigate('/orders')}>
                     <i className="fa-solid fa-bag-shopping"></i>
-                    <p>Orders</p>
+                    <p>Registro de ordenes</p>
                   </li>
                   <hr />
                   <li onClick={logout}>
                     <i className="fa-solid fa-right-from-bracket"></i>
-                    <p>Logout</p>
+                    <p>Cerrar Sesión</p>
                   </li>
                 </ul>
               </div>
