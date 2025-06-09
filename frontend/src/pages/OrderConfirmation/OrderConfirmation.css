@@ -1,0 +1,211 @@
+/* Contenedor principal de la confirmación */
+.order-confirmation-container {
+  width: min(90vw, 700px);
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Título principal */
+.order-confirmation-container h2 {
+  color: #BA0505;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Código de confirmación destacado */
+.confirmation-code {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 2px solid #BA0505;
+}
+
+.confirmation-code h3 {
+  color: #333;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.confirmation-code span {
+  color: #BA0505;
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 2px;
+}
+
+/* Detalles de la orden */
+.order-details {
+  text-align: left;
+  padding: 20px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.order-details p {
+  margin: 10px 0;
+  color: #555;
+  font-size: 16px;
+}
+
+.order-details strong {
+  color: #222;
+  font-weight: 600;
+}
+
+
+/* Estilo para los ítems de la orden */
+.order-items {
+  margin-top: 15px;
+}
+
+.order-items h4 {
+  color: #BA0505;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.order-items ul {
+  list-style: none;
+  padding: 0;
+}
+
+.order-items li {
+  margin: 8px 0;
+  color: #666;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Estilo para los estados de la orden */
+.order-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.order-status.pending {
+  background: #ffe5b4;
+  color: #d97706;
+}
+
+.order-status.confirmed {
+  background: #bfdbfe;
+  color: #2563eb;
+}
+
+.order-status.preparing {
+  background: #fed7aa;
+  color: #ea580c;
+}
+
+.order-status.ready {
+  background: #a7f3d0;
+  color: #059669;
+}
+
+.order-status.completed {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.order-status.cancelled {
+  background: #fecaca;
+  color: #b91c1c;
+}
+
+/* Botones de acción */
+.confirmation-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.confirmation-button {
+  background: #BA0505;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.confirmation-button:hover {
+  background: #a00404;
+}
+
+.confirmation-button.secondary {
+  background: #666;
+}
+
+.confirmation-button.secondary:hover {
+  background: #555;
+}
+
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Media query para pantallas pequeñas */
+@media (max-width: 600px) {
+  .order-confirmation-container {
+    width: 95vw;
+    padding: 20px;
+    margin: 20px auto;
+  }
+
+  .order-confirmation-container h2 {
+    font-size: 24px;
+  }
+
+  .confirmation-code h3 {
+    font-size: 18px;
+  }
+
+  .confirmation-code span {
+    font-size: 20px;
+  }
+
+  .order-details {
+    padding: 15px;
+  }
+
+  .confirmation-actions {
+    flex-direction: column;
+  }
+
+  .confirmation-button {
+    width: 100%;
+    padding: 10px;
+  }
+}
