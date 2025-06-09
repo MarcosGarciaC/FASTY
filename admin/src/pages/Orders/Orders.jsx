@@ -8,23 +8,34 @@ const Orders = () => {
 
   const statusOptions = ['pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled'];
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await fetch(`http://localhost:4000/api/order/cafeteria/${cafeteriaId}`);
-        const data = await res.json();
-        if (data.success) {
-          setOrders(data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  let intervalId;
 
-    if (cafeteriaId) fetchOrders();
-  }, [cafeteriaId]);
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch(`http://localhost:4000/api/order/cafeteria/${cafeteriaId}`);
+      const data = await res.json();
+      if (data.success) {
+        setOrders(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (cafeteriaId) {
+    fetchOrders(); // llamada inicial
+    intervalId = setInterval(fetchOrders, 5000); // polling cada 5 segundos
+  }
+
+  // Limpiar el intervalo cuando se desmonte el componente
+  return () => {
+    if (intervalId) clearInterval(intervalId);
+  };
+}, [cafeteriaId]);
+
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
