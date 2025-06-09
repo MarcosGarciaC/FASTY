@@ -9,7 +9,6 @@ const Order = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Obtener user_id desde localStorage
   const user_id = localStorage.getItem('user_id');
 
   const fetchUserOrders = async () => {
@@ -58,44 +57,123 @@ const Order = () => {
     );
   }
 
-  if (orders.length === 0) {
-    return (
-      <div className="order-container">
-        <p>No tienes órdenes registradas.</p>
-      </div>
-    );
-  }
+  // Separar órdenes en pendientes y completadas
+  const pendingOrders = orders.filter(order => 
+    ['pending', 'confirmed', 'preparing', 'ready'].includes(order.status)
+  );
+  const completedOrders = orders.filter(order => 
+    ['completed', 'cancelled'].includes(order.status)
+  );
 
   return (
     <div className="order-container">
       <h2>Tus Órdenes</h2>
-      <div className="order-list">
-        {orders.map((order) => (
-          <div key={order._id} className="order-card">
-            <h3>Orden #{order.confirmation_code}</h3>
-            <p><strong>Cafetería:</strong> {order.cafeteria_id?.name || 'Desconocida'}</p>
-            <p><strong>Estado:</strong> {order.status}</p>
-            <p><strong>Total:</strong> ${order.total_amount.toFixed(2)}</p>
-            <div className="order-items">
-              <h4>Items:</h4>
-              <ul>
-                {order.items.map((item, index) => (
-                  <li key={index}>
-                    {item.food_id?.name || 'Item desconocido'} (x{item.quantity}) - $
-                    {(item.food_id?.price * item.quantity).toFixed(2)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            {order.feedback && (
-              <p><strong>Feedback:</strong> {order.feedback}</p>
-            )}
-            <p><strong>Código de Confirmación:</strong> {order.confirmation_code}</p>
+
+      {/* Sección de órdenes pendientes */}
+      <div className="order-section">
+        <h3 className="order-section-title">Órdenes Pendientes</h3>
+        {pendingOrders.length === 0 ? (
+          <p className="order-empty">No tienes órdenes pendientes.</p>
+        ) : (
+          <div className="order-list">
+            {pendingOrders.map((order) => (
+              <div key={order._id} className="order-card">
+                <h3>Orden #{order.confirmation_code}</h3>
+                <p><strong>Cafetería:</strong> {order.cafeteria_id?.name || 'Desconocida'}</p>
+                <p>
+                  <strong>Estado:</strong>{' '}
+                  <span className={`order-status ${order.status}`}>
+                    <i className={`fas fa-${getStatusIcon(order.status)}`}></i>
+                    {order.status}
+                  </span>
+                </p>
+                <p><strong>Total:</strong> ${order.total_amount.toFixed(2)}</p>
+                <div className="order-items">
+                  <h4>Items:</h4>
+                  <ul>
+                    {order.items.map((item, index) => (
+                      <li key={index}>
+                        <span>{item.food_id?.name || 'Item desconocido'} (x{item.quantity})</span>
+                        <span>${(item.food_id?.price * item.quantity).toFixed(2)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                {order.feedback && (
+                  <p className="order-feedback"><strong>Feedback:</strong> {order.feedback}</p>
+                )}
+                <p className="order-confirmation-code">
+                  <strong>Código de Confirmación:</strong> {order.confirmation_code}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
+      </div>
+
+      {/* Sección de órdenes completadas */}
+      <div className="order-section">
+        <h3 className="order-section-title">Órdenes Completadas</h3>
+        {completedOrders.length === 0 ? (
+          <p className="order-empty">No tienes órdenes completadas.</p>
+        ) : (
+          <div className="order-list">
+            {completedOrders.map((order) => (
+              <div key={order._id} className="order-card">
+                <h3>Orden #{order.confirmation_code}</h3>
+                <p><strong>Cafetería:</strong> {order.cafeteria_id?.name || 'Desconocida'}</p>
+                <p>
+                  <strong>Estado:</strong>{' '}
+                  <span className={`order-status ${order.status}`}>
+                    <i className={`fas fa-${getStatusIcon(order.status)}`}></i>
+                    {order.status}
+                  </span>
+                </p>
+                <p><strong>Total:</strong> ${order.total_amount.toFixed(2)}</p>
+                <div className="order-items">
+                  <h4>Items:</h4>
+                  <ul>
+                    {order.items.map((item, index) => (
+                      <li key={index}>
+                        <span>{item.food_id?.name || 'Item desconocido'} (x{item.quantity})</span>
+                        <span>${(item.food_id?.price * item.quantity).toFixed(2)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                {order.feedback && (
+                  <p className="order-feedback"><strong>Feedback:</strong> {order.feedback}</p>
+                )}
+                <p className="order-confirmation-code">
+                  <strong>Código de Confirmación:</strong> {order.confirmation_code}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
+};
+
+// Función para asignar íconos según el estado
+const getStatusIcon = (status) => {
+  switch (status) {
+    case 'pending':
+      return 'clock';
+    case 'confirmed':
+      return 'check-circle';
+    case 'preparing':
+      return 'utensils';
+    case 'ready':
+      return 'box-open';
+    case 'completed':
+      return 'check-double';
+    case 'cancelled':
+      return 'times-circle';
+    default:
+      return 'info-circle';
+  }
 };
 
 export default Order;

@@ -1,3 +1,4 @@
+/* Contenedor principal de las órdenes */
 .order-container {
   width: min(90vw, 900px);
   margin: 40px auto;
@@ -9,6 +10,7 @@
   animation: fadeIn 0.5s ease-in-out;
 }
 
+/* Título principal */
 .order-container h2 {
   color: #BA0505;
   font-size: 28px;
@@ -19,12 +21,39 @@
   letter-spacing: 1px;
 }
 
+/* Sección de órdenes (pendientes o completadas) */
+.order-section {
+  margin-bottom: 40px;
+}
+
+/* Título de cada sección */
+.order-section-title {
+  color: #333;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #BA0505;
+  padding-bottom: 8px;
+}
+
+/* Mensaje cuando no hay órdenes */
+.order-empty {
+  color: #666;
+  font-size: 16px;
+  text-align: center;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* Cuadrícula de tarjetas de órdenes */
 .order-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
 }
 
+/* Tarjeta individual de una orden */
 .order-card {
   background: #fff;
   border: 1px solid #e0e0e0;
@@ -40,6 +69,7 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* Título de la orden con ícono */
 .order-card h3 {
   color: #333;
   font-size: 20px;
@@ -58,6 +88,7 @@
   font-size: 18px;
 }
 
+/* Párrafos dentro de la tarjeta */
 .order-card p {
   margin: 8px 0;
   color: #555;
@@ -70,6 +101,7 @@
   font-weight: 600;
 }
 
+/* Contenedor de ítems de la orden */
 .order-items {
   margin: 15px 0;
   padding: 10px;
@@ -97,6 +129,7 @@
   justify-content: space-between;
 }
 
+/* Estilo para los estados de la orden */
 .order-status {
   display: inline-flex;
   align-items: center;
@@ -142,6 +175,7 @@
   font-size: 14px;
 }
 
+/* Estilo para el feedback */
 .order-feedback {
   background: #f1f5f9;
   padding: 10px;
@@ -151,12 +185,14 @@
   color: #444;
 }
 
+/* Estilo para el código de confirmación */
 .order-confirmation-code {
   font-weight: 600;
   color: #BA0505;
   margin-top: 10px;
 }
 
+/* Animación de entrada */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -168,6 +204,7 @@
   }
 }
 
+/* Media query para pantallas pequeñas */
 @media (max-width: 600px) {
   .order-container {
     width: 95vw;
@@ -189,5 +226,9 @@
 
   .order-items li {
     font-size: 13px;
+  }
+
+  .order-section-title {
+    font-size: 20px;
   }
 }
