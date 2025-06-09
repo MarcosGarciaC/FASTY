@@ -22,7 +22,9 @@ const Navbar = ({ setShowLogin }) => {
   return (
     <div className='navbar'>
       <div className='navbar-left'>
-        <img src={assets.fasty_logo} alt="FASTY Logo" className='logo' />
+        <Link to="/">
+        <img src={assets.fasty_logo} alt="" className='logo' />
+        </Link>
         <ul className='navbar-menu'>
           <li
             onClick={() => setMenu("home")}
