@@ -1,16 +1,21 @@
 .food-item {
   width: 100%;
+  max-width: 600px; /* Limita el ancho máximo para mejor legibilidad */
   margin: 15px auto;
   border-radius: 15px;
   box-shadow: 0px 0px 10px #00000015;
-  transition: 0.3s;
-  animation: fadeIn 1s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   align-items: flex-start;
   padding: 15px;
   gap: 20px;
   background: white;
-  position: relative; /* Para posicionamiento relativo si es necesario */
+  position: relative;
+}
+
+.food-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 5px 15px #00000020;
 }
 
 .food-item-image {
@@ -51,6 +56,9 @@
   border-radius: 12px;
   font-size: 0.9rem;
   color: #555;
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Espacio entre el ícono de estrella y el número */
 }
 
 .food-item-desc {
@@ -58,14 +66,14 @@
   color: #666;
   font-size: 0.95rem;
   line-height: 1.4;
-  flex-grow: 1; /* Empuja el contenido hacia abajo */
+  flex-grow: 1;
 }
 
 .food-item-bottom {
   display: flex;
-  justify-content: space-between; /* Precio a la izquierda, botones a la derecha */
+  justify-content: space-between;
   align-items: center;
-  margin-top: auto; /* Lo coloca al final del contenedor */
+  margin-top: auto;
 }
 
 .food-item-price {
@@ -79,6 +87,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  position: relative; /* Para posicionar el tooltip */
 }
 
 .food-item-counter {
@@ -87,21 +96,50 @@
   gap: 10px;
 }
 
-.add_minus-icons i, 
+.add_minus-icons i,
 .food-item-counter i {
   cursor: pointer;
   font-size: 1rem;
   color: #333;
   background: #f8f8f8;
-  padding: 5px;
+  padding: 6px;
   border-radius: 50%;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
 }
 
-.add_minus-icons i:hover, 
+.add_minus-icons i:hover,
 .food-item-counter i:hover {
   background: #f2b529;
   color: white;
+}
+
+.add_minus-icons .fa-plus.disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5;
+  background: #f8f8f8;
+  color: #999;
+}
+
+/* Tooltip para el botón deshabilitado */
+.add_minus-icons .fa-plus.disabled:hover::after {
+  content: "No se pueden agregar items de otras cafeterias";
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background: #333;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 10;
+  transform: translateY(-5px);
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.add_minus-icons .fa-plus.disabled::after {
+  opacity: 0;
 }
 
 .item-count {
@@ -110,9 +148,4 @@
   font-weight: 600;
   min-width: 20px;
   text-align: center;
-}
-
-.food-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 5px 15px #00000020;
 }

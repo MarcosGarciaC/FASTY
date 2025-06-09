@@ -50,7 +50,7 @@ const PlaceOrder = () => {
       // Obtener el token del usuario del localStorage
       const token = localStorage.getItem('token')
       if (!token) {
-        alert('Please login to place an order')
+        alert('Por favor, inicie sesión para realizar un pedido.')
         navigate('/login')
         return
       }
@@ -81,7 +81,7 @@ const PlaceOrder = () => {
       const cafeteria_id = orderItems[0]?.cafeteria_id
 
       if (!cafeteria_id) {
-        alert('No cafeteria selected')
+        alert('Ninguna cafeteria seleccionada')
         return
       }
 
@@ -106,13 +106,13 @@ const PlaceOrder = () => {
       })
 
       if (response.data.success) {
-        alert('Order placed successfully!')
+        alert('Orden realizada con éxito!')
         navigate('/order-confirmation', { state: { order: response.data.data } })
       } else {
         alert('Failed to place order: ' + response.data.message)
       }
     } catch (error) {
-      console.error('Error placing order:', error)
+      console.error('Error realizando la orden:', error)
       alert('Error placing order. Please try again.')
     }
   }

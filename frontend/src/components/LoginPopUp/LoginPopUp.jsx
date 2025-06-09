@@ -2,11 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import "./LoginPopUp.css";
 import "https://kit.fontawesome.com/ce8be9cf0b.js";
 import { StoreContext } from '../../context/StoreContext';
-import axios from "axios"
+import axios from "axios";
 
 const LoginPopUp = ({ setShowLogin }) => {
-
-  const { url, setToken } = useContext(StoreContext)
+  const { url, setToken } = useContext(StoreContext);
 
   const [currState, setCurrState] = useState("Login");
   const [data, setData] = useState({
@@ -14,7 +13,7 @@ const LoginPopUp = ({ setShowLogin }) => {
     email: "",
     password: "",
     phone: "",
-    role: ""
+    role: "customer" // Establecer "customer" por defecto
   });
 
   const onChangeHandler = (event) => {
@@ -24,37 +23,34 @@ const LoginPopUp = ({ setShowLogin }) => {
 
   useEffect(() => {
     console.log(data);
-  }, [data])
-
+  }, [data]);
 
   const onLogin = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     let newUrl = url;
     if (currState === "Login") {
-      newUrl += "/api/user/login"
-    }
-    else {
-      newUrl += "/api/user/register"
+      newUrl += "/api/user/login";
+    } else {
+      newUrl += "/api/user/register";
     }
 
     const response = await axios.post(newUrl, data);
     if (response.data.success) {
       setToken(response.data.token);
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user_id", response.data.user._id); // <- Guardar user_id
+      localStorage.setItem("user_id", response.data.user._id);
       setShowLogin(false);
+    } else {
+      alert(response.data.message);
     }
-    else {
-      alert(response.data.message)
-    }
-  }
+  };
 
   return (
     <div className='login-popup'>
       <form onSubmit={onLogin} className="login-popup-container">
         <div className="login-popup-title">
           <h2>{currState}</h2>
-          <i onClick={() => setShowLogin(false)} className="fa-solid fa-xmark"></i>
+          <i onClick={() => setShowLogin(false)} className="fa-solid fa-xmark" aria-label="Cerrar ventana de inicio de sesión"></i>
         </div>
 
         <div className='login-popup-inputs'>
@@ -76,18 +72,6 @@ const LoginPopUp = ({ setShowLogin }) => {
                 placeholder="Phone Number"
                 required
               />
-
-              <select
-                name="role"
-                onChange={onChangeHandler}
-                value={data.role}
-                required
-              >
-                <option value="">Select Role</option>
-                <option value="customer">Customer</option>
-                <option value="cafeteria_owner">Cafeteria Owner</option>
-                <option value="admin">Admin</option>
-              </select>
             </>
           )}
 
@@ -109,7 +93,7 @@ const LoginPopUp = ({ setShowLogin }) => {
           />
         </div>
 
-        <button type="sunmit">
+        <button type="submit">
           {currState === "Sign Up" ? "Create Account" : "Login"}
         </button>
 

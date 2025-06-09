@@ -3,15 +3,37 @@ import './ExploreBuss.css';
 import { StoreContext } from '../../context/StoreContext';
 
 const ExploreBuss = ({ cafeteriaId, setCafeteriaId }) => {
-  const { cafetinList, url } = useContext(StoreContext);
+  const { cafetinList, url, orderItems, clearCart } = useContext(StoreContext);
+
+  // Filtrar la lista de cafeterías según el cafeteriaId
+  const filteredCafetinList = cafeteriaId === "All" 
+    ? cafetinList 
+    : cafetinList.filter(item => item._id === cafeteriaId);
+
+  const handleCafeteriaClick = (itemId) => {
+    if (cafeteriaId === itemId && orderItems.length > 0) {
+      // If trying to deselect the current cafeteria and cart is not empty
+      const confirmClear = window.confirm(
+        "Tienes artículos de esta cafetería en tu carrito. Si los deseleccionas, se vaciarán. ¿Quieres continuar?"
+      );
+      if (confirmClear) {
+        clearCart(); // Clear the cart
+        setCafeteriaId("All"); // Deselect the cafeteria
+      }
+      // If user cancels, do nothing (keep current cafeteriaId)
+    } else {
+      // Toggle between selecting a new cafeteria or deselecting to "All"
+      setCafeteriaId(cafeteriaId === itemId ? "All" : itemId);
+    }
+  };
 
   return (
     <div className='explore-buss' id='explore-buss'>
-      <h1>Explora las distintas cafeterías</h1>
+      <h1>{cafeteriaId === "All" ? "Explora las distintas cafeterías" : "Cafetería seleccionada"}</h1>
       <div className="explore-buss__list">
-        {cafetinList.map((item, index) => (
+        {filteredCafetinList.map((item, index) => (
           <div
-            onClick={() => setCafeteriaId(prev => prev === item._id ? "All" : item._id)}
+            onClick={() => handleCafeteriaClick(item._id)}
             key={index}
             className='explore-buss-list__items'
           >

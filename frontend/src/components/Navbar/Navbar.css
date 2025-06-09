@@ -160,49 +160,113 @@
   color: #ff6b6b;
 }
 
-.navbar-profile{
-  position: relative;
+.navbar-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #49557e;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
 }
-.nav-profile-dropdown{
+
+.navbar-profile:hover {
+  background-color: #f5f5f5;
+  color: #ff6b6b;
+}
+
+.navbar-profile i {
+  font-size: 16px;
+}
+
+.nav-profile-dropdown {
   position: absolute;
   display: none;
   right: 0;
-  z-index: 1;
-}
-.navbar-profile:hover .nav-profile-dropdown{
-  display: flex;
+  top: 100%;
   flex-direction: column;
   gap: 10px;
   background-color: #fff2ef;
   padding: 12px 25px;
   border-radius: 4px;
-  border: 1px solid tomato;
+  border: 1px solid #ff6b6b;
   outline: 2px solid white;
   list-style: none;
+  z-index: 10;
 }
 
-.nav-profile-dropdown li{
+.navbar-profile:hover .nav-profile-dropdown {
+  display: flex;
+}
+
+.nav-profile-dropdown li {
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  color: #49557e;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
-.nav-profile-dropdown i{
+.nav-profile-dropdown li:hover {
+  color: #ff6b6b;
+}
+
+.nav-profile-dropdown i {
   width: 20px;
+  font-size: 16px;
 }
 
-.nav-profile-dropdown li:hover{
-  color: tomato;
-}
-
-@media (max-width:750px){
-  .navbar .logo{
+@media (max-width: 750px) {
+  .navbar .logo {
     width: 30px;
     height: 30px;
   }
-  .navbar-menu{
-  display: none;
+
+  .navbar-menu {
+    display: none;
   }
-  
+
+  .navbar-right {
+    gap: 15px;
+  }
+
+  .action-button, .navbar-profile {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .action-button i, .navbar-profile i {
+    font-size: 14px;
+  }
+
+  .search-container {
+    right: 100px;
+    width: 150px;
+  }
+
+  .search-input {
+    width: 120px;
+    font-size: 12px;
+  }
+
+  .nav-profile-dropdown {
+    padding: 8px 15px;
+    right: -10px;
+  }
+
+  .nav-profile-dropdown li {
+    font-size: 12px;
+  }
+
+  .nav-profile-dropdown i {
+    font-size: 14px;
+  }
 }
