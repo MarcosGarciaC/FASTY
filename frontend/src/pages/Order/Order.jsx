@@ -142,7 +142,7 @@ const Order = () => {
                   </ul>
                 </div>
                 {order.feedback && (
-                  <p className="order-feedback"><strong>Feedback:</strong> {order.feedback}</p>
+                  <p className="order-feedback"><strong>Descripción:</strong> {order.feedback}</p>
                 )}
                 <p className="order-confirmation-code">
                   <strong>Código de Confirmación:</strong> {order.confirmation_code}
