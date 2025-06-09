@@ -97,7 +97,8 @@ const getOrdersByUser = async (req, res) => {
     const orders = await orderModel.find({ user_id })
       .populate('user_id', 'name email')
       .populate('cafeteria_id', 'name')
-      .populate('items.food_id', 'name price');
+      .populate('items.food_id', 'name price')
+      .sort({ createdAt: -1 }); // Ordenar por fecha de creación descendente
     res.json({ success: true, data: orders });
   } catch (error) {
     console.log(error);
