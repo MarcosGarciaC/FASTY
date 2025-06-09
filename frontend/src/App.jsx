@@ -7,6 +7,7 @@ import PlaceOrder from './pages/PlaceOrder/PlaceOrder'
 import Footer from './components/Footer/Footer'
 import LoginPopUp from './components/LoginPopUp/LoginPopUp'
 import Order from './pages/Order/Order'
+import ScrollToTop from './context/ScrollTop'
 import OrderConfirmation from './pages/OrderConfirmation/OrderConfirmation'
 
 const App = () => {
