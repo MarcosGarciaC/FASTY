@@ -5,7 +5,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
 const PlaceOrder = () => {
-  const { getTotalCartAmount, orderItems, food_list, url } = useContext(StoreContext)
+  const { getTotalCartAmount, orderItems, food_list, url, clearCart } = useContext(StoreContext)
   const deliveryFee = 2 // Tarifa fija de envío
   const navigate = useNavigate()
 
@@ -107,6 +107,7 @@ const PlaceOrder = () => {
 
       if (response.data.success) {
         alert('Orden realizada con éxito!')
+        clearCart()
         navigate('/order-confirmation', { state: { order: response.data.data } })
       } else {
         alert('Failed to place order: ' + response.data.message)
