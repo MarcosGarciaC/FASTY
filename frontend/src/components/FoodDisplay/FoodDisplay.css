@@ -20,3 +20,24 @@
   color: #666;
   margin: 20px 0;
 }
+
+@media (max-width: 768px) {
+  .food-display {
+    margin: 15px;
+  }
+
+  .food-display h2 {
+    font-size: 20px;
+  }
+
+  .food-display-list {
+    grid-template-columns: 1fr; /* Una sola columna en móviles */
+    gap: 20px;
+    row-gap: 30px;
+  }
+
+  .food-display p {
+    font-size: 1rem;
+    margin: 15px 0;
+  }
+}
