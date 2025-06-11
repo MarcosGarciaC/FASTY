@@ -2,13 +2,25 @@ import React, { useContext, useState } from 'react'
 import './Cart.css'
 import { StoreContext } from '../../context/StoreContext'
 import { useNavigate } from 'react-router-dom'
+import Flatpickr from 'react-flatpickr'
+import 'flatpickr/dist/themes/material_blue.css' // Puedes elegir otro tema si quieres
+
 
 const Cart = () => {
   const { cartItems, food_list, removeFromCart, getTotalCartAmount } = useContext(StoreContext)
   const navigate = useNavigate()
-  
+
+  const getDefaultPickupTime = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 16);
+    now.setSeconds(0);
+    now.setMilliseconds(0);
+    return now;
+  }
+
+
   // Estados para los nuevos campos
-  const [pickupTime, setPickupTime] = useState('')
+  const [pickupTime, setPickupTime] = useState(getDefaultPickupTime())
   const [feedback, setFeedback] = useState('')
   const [rating, setRating] = useState(0)
   const [validationError, setValidationError] = useState('')
@@ -26,16 +38,16 @@ const Cart = () => {
       setValidationError('Por favor seleccione una hora de retiro')
       return false
     }
-    
+
     const selectedTime = new Date(time).getTime()
     const minTime = new Date()
     minTime.setMinutes(minTime.getMinutes() + 15)
-    
+
     if (selectedTime < minTime.getTime()) {
       setValidationError('La hora de retiro debe ser al menos 15 min después de ahora')
       return false
     }
-    
+
     setValidationError('')
     return true
   }
@@ -63,12 +75,12 @@ const Cart = () => {
     if (!validatePickupTime(pickupTime)) {
       return
     }
-    
+
     // Guardar los datos adicionales en el localStorage para usarlos en PlaceOrder
     localStorage.setItem('orderFeedback', feedback)
     localStorage.setItem('orderRating', rating.toString())
     localStorage.setItem('pickupTime', pickupTime)
-    
+
     // Navegar a la página de checkout
     navigate('/order')
   }
@@ -117,37 +129,58 @@ const Cart = () => {
               <hr />
               <div className="cart-total-details">
                 <p>Precio de pre orden</p>
-                <p>${getTotalCartAmount()===0?0:deliveryFee.toFixed(2)}</p>
+                <p>${getTotalCartAmount() === 0 ? 0 : deliveryFee.toFixed(2)}</p>
               </div>
               <hr />
               <div className="cart-total-details">
                 <b>Total</b>
-                <b>${(getTotalCartAmount()===0?0:getTotalCartAmount()+deliveryFee).toFixed(2)}</b>
+                <b>${(getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + deliveryFee).toFixed(2)}</b>
               </div>
             </div>
-            
+
             {/* Campos adicionales */}
             <div className="additional-fields">
               <div className="pickup-time">
                 <label htmlFor="pickupTime">Hora de retiro:</label>
-                <input
-                  type="datetime-local"
-                  id="pickupTime"
+                <Flatpickr
+                  options={{
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: 'h:i K', // formato 12h con AM/PM
+                    time_24hr: false,
+                    minuteIncrement: 1,
+                    defaultDate: getDefaultPickupTime(), // esta es la clave
+                  }}
                   value={pickupTime}
-                  onChange={handlePickupTimeChange}
-                  required
-                  min={getMinPickupTime()}
+                  onChange={(selectedDates) => {
+                    const now = new Date()
+                    const selectedTime = selectedDates[0]
+
+                    // Combinar fecha de hoy con hora seleccionada
+                    const combinedDate = new Date(
+                      now.getFullYear(),
+                      now.getMonth(),
+                      now.getDate(),
+                      selectedTime.getHours(),
+                      selectedTime.getMinutes()
+                    )
+
+                    setPickupTime(combinedDate)
+                    validatePickupTime(combinedDate.toISOString())
+                  }}
                 />
+
+
                 {validationError && (
-                  <p className="error-message" style={{color: 'red', fontSize: '0.8rem'}}>
+                  <p className="error-message" style={{ color: 'red', fontSize: '0.8rem' }}>
                     {validationError}
                   </p>
                 )}
-                <p className="time-note" style={{fontSize: '0.8rem', color: '#555'}}>
+                <p className="time-note" style={{ fontSize: '0.8rem', color: '#555' }}>
                   Por favor seleccione un tiempo de al menos 15 minutos desde ahora
                 </p>
               </div>
-              
+
               <div className="rating-feedback">
                 <div className="rating">
                   <label>Rating (optional):</label>
@@ -168,7 +201,7 @@ const Cart = () => {
                     ))}
                   </div>
                 </div>
-                
+
                 <div className="feedback">
                   <label htmlFor="feedback">Notas para el producto (optional):</label>
                   <textarea
@@ -187,9 +220,9 @@ const Cart = () => {
                 </div>
               </div>
             </div>
-            
-            <button 
-              onClick={handleProceedToCheckout} 
+
+            <button
+              onClick={handleProceedToCheckout}
               className='checkout-btn'
               disabled={getTotalCartAmount() === 0 || !!validationError}
               style={{
@@ -204,9 +237,9 @@ const Cart = () => {
           <div className="cart-promocode">
             <p className='promo-text'>Si tienes un código de promoción ponlo aqui!</p>
             <div className="cart-promocode-input">
-              <input 
-                type='text' 
-                placeholder='Código de promo' 
+              <input
+                type='text'
+                placeholder='Código de promo'
                 style={{
                   padding: '8px',
                   border: '1px solid #ddd',
@@ -214,7 +247,7 @@ const Cart = () => {
                   width: '70%'
                 }}
               />
-              <button 
+              <button
                 className='promo-btn'
                 style={{
                   padding: '8px 12px',
