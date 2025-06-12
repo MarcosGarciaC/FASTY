@@ -18,6 +18,8 @@ const Cart = () => {
     return now;
   }
 
+  
+
 
   // Estados para los nuevos campos
   const [pickupTime, setPickupTime] = useState(getDefaultPickupTime())

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import "./LoginPopUp.css";
-import "https://kit.fontawesome.com/ce8be9cf0b.js";
 import { StoreContext } from '../../context/StoreContext';
+import { assets } from '../../assets/assets';
 import axios from "axios";
 
 const LoginPopUp = ({ setShowLogin }) => {
@@ -9,16 +9,36 @@ const LoginPopUp = ({ setShowLogin }) => {
 
   const [currState, setCurrState] = useState("Login");
   const [data, setData] = useState({
-    full_name: "",
     email: "",
     password: "",
-    phone: "",
-    role: "customer" // Establecer "customer" por defecto
+    full_name: "",
+    phone: ""
   });
+  const [showPhone, setShowPhone] = useState(false);
+  const [showEmail, setShowEmail] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
-    setData(data => ({ ...data, [name]: value }));
+    setData(prevData => ({ ...prevData, [name]: value }));
+
+    if (name === "email") {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@std\.uni\.edu\.ni$/;
+      setEmailError(!emailRegex.test(value));
+    }
+
+    if (currState === "Sign Up") {
+      if (name === "full_name" && value.trim().length > 0) {
+        setShowPhone(true);
+      }
+      if (name === "phone" && value.trim().length > 0) {
+        setShowEmail(true);
+      }
+      if (name === "email" && value.trim().length > 0 && !emailError) {
+        setShowPassword(true);
+      }
+    }
   };
 
   useEffect(() => {
@@ -27,6 +47,11 @@ const LoginPopUp = ({ setShowLogin }) => {
 
   const onLogin = async (event) => {
     event.preventDefault();
+    if (emailError) {
+      alert("Por favor, ingresa un correo electrónico válido que sea institucional");
+      return;
+    }
+
     let newUrl = url;
     if (currState === "Login") {
       newUrl += "/api/user/login";
@@ -34,7 +59,10 @@ const LoginPopUp = ({ setShowLogin }) => {
       newUrl += "/api/user/register";
     }
 
-    const response = await axios.post(newUrl, data);
+    const response = await axios.post(newUrl, {
+      ...data,
+      ...(currState === "Sign Up" && { full_name: data.full_name, phone: data.phone })
+    });
     if (response.data.success) {
       setToken(response.data.token);
       localStorage.setItem("token", response.data.token);
@@ -49,10 +77,9 @@ const LoginPopUp = ({ setShowLogin }) => {
     <div className='login-popup'>
       <form onSubmit={onLogin} className="login-popup-container">
         <div className="login-popup-title">
-          <h2>{currState}</h2>
           <i onClick={() => setShowLogin(false)} className="fa-solid fa-xmark" aria-label="Cerrar ventana de inicio de sesión"></i>
         </div>
-
+        <img src={assets.fasty_logo} alt="Fasty Logo" className='logo' />
         <div className='login-popup-inputs'>
           {currState === "Sign Up" && (
             <>
@@ -61,52 +88,88 @@ const LoginPopUp = ({ setShowLogin }) => {
                 name="full_name"
                 onChange={onChangeHandler}
                 value={data.full_name}
-                placeholder="Full Name"
+                placeholder="Nombre completo"
                 required
+                className={`input-field ${data.full_name.trim().length > 0 ? 'filled' : ''}`}
               />
+              {showPhone && (
+                <input
+                  type="text"
+                  name="phone"
+                  onChange={onChangeHandler}
+                  value={data.phone}
+                  placeholder="Número de teléfono"
+                  required
+                  className={`input-field ${data.phone.trim().length > 0 ? 'filled' : ''}`}
+                />
+              )}
+              {showEmail && (
+                <>
+                  <input
+                    type="text"
+                    name="email"
+                    onChange={onChangeHandler}
+                    value={data.email}
+                    placeholder="Correo (@std.uni.edu.ni)"
+                    required
+                    className={`input-field ${data.email.trim().length > 0 ? 'filled' : ''} ${emailError ? 'error' : ''}`}
+                  />
+                  {emailError && (
+                    <p className="email-error">El correo debe ser institucional "terminar en @std.uni.edu.ni"</p>
+                  )}
+                </>
+              )}
+              {showPassword && (
+                <input
+                  type="password"
+                  name="password"
+                  onChange={onChangeHandler}
+                  value={data.password}
+                  placeholder="Contraseña"
+                  required
+                  className={`input-field ${data.password.trim().length > 0 ? 'filled' : ''}`}
+                />
+              )}
+            </>
+          )}
+          {currState === "Login" && (
+            <>
               <input
                 type="text"
-                name="phone"
+                name="email"
                 onChange={onChangeHandler}
-                value={data.phone}
-                placeholder="Phone Number"
+                value={data.email}
+                placeholder="Correo (@std.uni.edu.ni)"
                 required
+                className={`input-field ${data.email.trim().length > 0 ? 'filled' : ''} ${emailError ? 'error' : ''}`}
+              />
+              {emailError && (
+                <p className="email-error">El correo debe terminar en @std.uni.edu.ni</p>
+              )}
+              <input
+                type="password"
+                name="password"
+                onChange={onChangeHandler}
+                value={data.password} // Fixed typo
+                placeholder="Contraseña"
+                required
+                className={`input-field ${data.password.trim().length > 0 ? 'filled' : ''}`}
               />
             </>
           )}
-
-          <input
-            type="email"
-            name="email"
-            onChange={onChangeHandler}
-            value={data.email}
-            placeholder="Email"
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            onChange={onChangeHandler}
-            value={data.password}
-            placeholder="Password"
-            required
-          />
+          <a href="#" className="forgot-password">¿Olvidaste tu contraseña?</a>
         </div>
-
-        <button type="submit">
-          {currState === "Sign Up" ? "Create Account" : "Login"}
-        </button>
-
+        <button type="submit" className="login-button">{currState === "Sign Up" ? "Regístrarse" : "Iniciar sesión"}</button>
+        <p className="signup-prompt">
+          {currState === "Login" ? (
+            <>¿No tienes una cuenta? <span onClick={() => setCurrState('Sign Up')}>Regístrarse</span></>
+          ) : (
+            <>¿Ya tienes una cuenta? <span onClick={() => setCurrState('Login')}>Iniciar sesión</span></>
+          )}
+        </p>
         <div className="login-popup-condition">
-          <input type="checkbox" required />
-          <p>By continuing, I agree to the terms of use & privacy policy.</p>
+          <p>Al continuar, aceptas las Condiciones de uso y la Política de privacidad de FASTY.</p>
         </div>
-
-        {currState === "Login" ? (
-          <p>Create new account? <span onClick={() => setCurrState('Sign Up')}>Click here</span></p>
-        ) : (
-          <p>Already have an account? <span onClick={() => setCurrState('Login')}>Login here</span></p>
-        )}
       </form>
     </div>
   );

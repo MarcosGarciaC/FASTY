@@ -43,7 +43,6 @@ const [formData] = useState({
       const token = localStorage.getItem('token')
       if (!token) {
         alert('Por favor, inicie sesión para realizar un pedido.')
-        navigate('/login')
         return
       }
 

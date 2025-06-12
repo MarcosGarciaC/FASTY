@@ -42,7 +42,7 @@ const Navbar = ({ setShowLogin }) => {
             onClick={() => setMenu("contact-us")}
             className={`nav-item ${menu === "contact-us" ? "active" : ""}`}
           >
-            <a href='#footer'>Contáctanos</a>
+            <a href='#footer' hidden="true">Contáctanos </a>
           </li>
         </ul>
       </div>
