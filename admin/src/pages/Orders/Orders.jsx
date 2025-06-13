@@ -8,38 +8,37 @@ const Orders = () => {
 
   const statusOptions = ['pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled'];
 
-useEffect(() => {
-  let intervalId;
+  useEffect(() => {
+    let intervalId;
 
-  const fetchOrders = async () => {
-    try {
-      const res = await fetch(`http://localhost:4000/api/order/cafeteria/${cafeteriaId}`);
-      const data = await res.json();
-      if (data.success) {
-        setOrders(data.data);
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/order/cafeteria/${cafeteriaId}`);
+        const data = await res.json();
+        if (data.success) {
+          setOrders(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    } finally {
-      setLoading(false);
+    };
+
+    if (cafeteriaId) {
+      fetchOrders(); // llamada inicial
+      intervalId = setInterval(fetchOrders, 5000); // polling cada 5 segundos
     }
-  };
 
-  if (cafeteriaId) {
-    fetchOrders(); // llamada inicial
-    intervalId = setInterval(fetchOrders, 5000); // polling cada 5 segundos
-  }
-
-  // Limpiar el intervalo cuando se desmonte el componente
-  return () => {
-    if (intervalId) clearInterval(intervalId);
-  };
-}, [cafeteriaId]);
-
+    // Limpiar el intervalo cuando se desmonte el componente
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [cafeteriaId]);
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/order/${orderId}/status`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/order/${orderId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus })

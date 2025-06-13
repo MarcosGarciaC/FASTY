@@ -70,6 +70,50 @@ const listFoodByCafeteriaId = async (req, res) => {
   }
 };
 
+// Update food item
+const updateFood = async (req, res) => {
+  try {
+    const { id } = req.body;
+    let updateData = {
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      category: req.body.category,
+      ingredients: req.body.ingredients,
+      is_available: req.body.is_available,
+      preparation_time: req.body.preparation_time,
+      daily_quantity: req.body.daily_quantity
+    };
 
+    // Si hay una nueva imagen, actualizarla
+    if (req.file) {
+      // Eliminar la imagen anterior
+      const food = await foodModel.findById(id);
+      if (food.image) {
+        fs.unlink(`uploads/${food.image}`, () => {});
+      }
+      
+      updateData.image = req.file.filename;
+    }
+
+    const updatedFood = await foodModel.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true } // Devuelve el documento actualizado
+    );
+
+    if (!updatedFood) {
+      return res.json({ success: false, message: "Comida no encontrada" });
+    }
+
+    res.json({ success: true, message: "Comida actualizada", data: updatedFood });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error al actualizar la comida" });
+  }
+};
+
+// No olvides exportar la nueva función al final del archivo
+export { addFood, listFood, removeFood, listFoodByCafeteriaId, updateFood };
 
 export {addFood, listFood,removeFood, listFoodByCafeteriaId}

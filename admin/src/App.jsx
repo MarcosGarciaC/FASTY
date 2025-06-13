@@ -10,7 +10,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider, AuthContext } from './Context/AuthContext';
 
-const url = "http://localhost:4000";
+const url = import.meta.env.VITE_API_BASE_URL;
 
 const ProtectedLayout = () => (
   <>

@@ -1,174 +1,220 @@
+/* Notion-inspired styling for the Add form */
 .add {
-  width: 70%;
-  margin-left: max(5vw, 25px);
-  margin-top: 50px;
-  color: #333;
+  width: 100%;
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 0 24px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #1a1a1a;
   font-size: 16px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
 }
 
+/* Form container */
 .add form {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  background-color: #fafafa;
-  padding: 30px;
+  gap: 24px;
+  background-color: #fff;
+  padding: 32px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
 }
 
+/* Image upload section */
 .add-img-upload {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  text-align: center;
+  gap: 12px;
+}
+
+.add-img-upload p {
+  font-size: 14px;
+  font-weight: 500;
+  color: #37352f;
+  margin: 0;
 }
 
 .add-img-upload label {
   cursor: pointer;
-  color: #555;
-  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  background-color: #f7f7f7;
+  transition: border-color 0.2s ease;
 }
 
 .add-img-upload label:hover {
-  color: #000;
+  border-color: #37352f;
 }
 
 .add-img-upload img {
-  width: 120px;
-  margin-top: 10px;
-}
-
-.add-product-name,
-.add-product-description {
   width: 100%;
-}
-
-.add-product-name input,
-.add-product-description textarea {
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 15px;
-  width: 100%;
-  resize: none;
-  background-color: #fff;
-}
-
-.add-category-price {
-  display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
-}
-
-.add-category-price select,
-.add-category-price input {
-  max-width: 180px;
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  font-size: 15px;
-}
-
-.add-btn {
-  max-width: 150px;
-  padding: 12px 16px;
-  border: none;
-  border-radius: 8px;
-  background-color: #000;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.add-btn:hover {
-  background-color: #333;
-}
-
-.flex-col {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.add-img-upload img {
-  width: 120px;
-  height: 120px;
+  height: 100%;
   object-fit: cover;
   border-radius: 8px;
-  border: 2px solid #ccc;
-  transition: transform 0.3s ease;
+  border: 1px solid #e0e0e0;
+  transition: transform 0.2s ease;
 }
 
 .add-img-upload img:hover {
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
-/* Estilo para inputs generales */
+.add-img-upload input[type="file"] {
+  display: none;
+}
+
+/* General input and textarea styles */
 .add input[type="text"],
 .add input[type="number"],
 .add textarea,
 .add select {
   width: 100%;
   padding: 12px;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 15px;
-  background-color: #fff;
-  transition: border-color 0.3s ease;
+  font-size: 14px;
+  color: #1a1a1a;
+  background-color: #f7f7f7;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .add input[type="text"]:focus,
 .add input[type="number"]:focus,
 .add textarea:focus,
 .add select:focus {
-  border-color: #888;
+  border-color: #37352f;
+  background-color: #fff;
   outline: none;
 }
 
-/* Ajuste para sección de textarea de ingredientes */
 .add textarea {
   resize: vertical;
-  min-height: 60px;
+  min-height: 80px;
 }
 
-/* Estilo para checkbox */
+/* Form section containers */
+.add-product-name,
+.add-product-description,
+.add-category-price,
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-product-name p,
+.add-product-description p,
+.add-category-price p,
+.flex-col p {
+  font-size: 14px;
+  font-weight: 500;
+  color: #37352f;
+  margin: 0;
+}
+
+/* Category and price row */
+.add-category-price {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.add-category select,
+.add-price input {
+  max-width: none;
+}
+
+/* Checkbox styling */
 .add input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
   margin-right: 8px;
-  transform: scale(1.2);
+  accent-color: #37352f;
   cursor: pointer;
 }
 
-/* Estilo para etiqueta del checkbox */
 .add label {
-  font-size: 15px;
   display: flex;
   align-items: center;
+  font-size: 14px;
+  color: #37352f;
   cursor: pointer;
 }
 
-/* Contenedor de inputs como "preparation time", "daily quantity", etc. */
-.add .flex-col input {
-  max-width: 300px;
+/* Submit button */
+.add-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background-color: #37352f;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  align-self: flex-start;
 }
 
-/* Responsive */
+.add-btn:hover {
+  background-color: #2a2924;
+}
+
+/* Hidden fields */
+.add .flex-col[hidden] {
+  display: none;
+}
+
+/* Responsive design */
 @media screen and (max-width: 768px) {
   .add {
-    width: 90%;
-    margin: 20px auto;
+    padding: 0 16px;
+    margin: 24px auto;
+  }
+
+  .add form {
+    padding: 24px;
   }
 
   .add-category-price {
-    flex-direction: column;
-    gap: 20px;
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .add-btn {
     width: 100%;
-    max-width: none;
+    align-self: stretch;
+  }
+
+  .add-img-upload img,
+  .add-img-upload label {
+    width: 100px;
+    height: 100px;
   }
 }
 
+@media screen and (max-width: 480px) {
+  .add form {
+    padding: 16px;
+  }
+
+  .add input[type="text"],
+  .add input[type="number"],
+  .add textarea,
+  .add select {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .add-btn {
+    font-size: 13px;
+    padding: 10px 16px;
+  }
+}
