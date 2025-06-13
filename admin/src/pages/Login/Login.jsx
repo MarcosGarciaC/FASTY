@@ -32,6 +32,8 @@ const Login = () => {
           
           if (rememberMe) {
             localStorage.setItem('rememberMe', 'true');
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('user', JSON.stringify(user));
           }
           
           navigate('/dashboard');
@@ -90,7 +92,6 @@ const Login = () => {
               />
               <span>Recordarme</span>
             </label>
-            <a href="#forgot-password" className="forgot-password">¿Olvidaste tu contraseña?</a>
           </div>
           
           <button 
@@ -102,7 +103,6 @@ const Login = () => {
           </button>
           
           <div className="register-link">
-            ¿No tienes una cuenta? <a href="#register">Regístrate</a>
           </div>
         </form>
       </div>
