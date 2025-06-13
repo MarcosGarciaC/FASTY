@@ -7,7 +7,7 @@ import 'flatpickr/dist/themes/material_blue.css' // Puedes elegir otro tema si q
 
 
 const Cart = () => {
-  const { cartItems, food_list, removeFromCart, getTotalCartAmount } = useContext(StoreContext)
+  const { cartItems, food_list, removeFromCart, getTotalCartAmount, url } = useContext(StoreContext)
   const navigate = useNavigate()
 
   const getDefaultPickupTime = () => {
