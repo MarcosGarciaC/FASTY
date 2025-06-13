@@ -115,5 +115,3 @@ const updateFood = async (req, res) => {
 
 // No olvides exportar la nueva función al final del archivo
 export { addFood, listFood, removeFood, listFoodByCafeteriaId, updateFood };
-
-export {addFood, listFood,removeFood, listFoodByCafeteriaId}
