@@ -36,13 +36,13 @@
 /* Table row styling */
 .list-table-format {
   display: grid;
-  grid-template-columns: 80px 1fr 1fr 80px 2fr 60px;
+  grid-template-columns: 80px 1fr 1fr 80px 2fr 2fr 60px;
   align-items: center;
   gap: 16px;
   padding: 16px;
   border-bottom: 1px solid #e0e0e0;
   transition: background-color 0.2s ease;
-  min-width: 700px;
+  min-width: 800px;
 }
 
 .list-table-format:last-child {
@@ -124,10 +124,10 @@
   }
 
   .list-table-format {
-    grid-template-columns: 60px 1fr 1fr 80px 1fr 60px;
+    grid-template-columns: 60px 1fr 1fr 80px 1fr 1fr 60px;
     gap: 12px;
     padding: 12px;
-    min-width: 600px;
+    min-width: 700px;
   }
 
   .list-table-format img {
@@ -154,10 +154,10 @@
   }
 
   .list-table-format {
-    grid-template-columns: 50px 1fr 1fr 60px 1fr 50px;
+    grid-template-columns: 50px 1fr 1fr 60px 1fr 1fr 50px;
     gap: 8px;
     padding: 10px;
-    min-width: 500px;
+    min-width: 600px;
   }
 
   .list-table-format img {
@@ -179,15 +179,25 @@
   }
 }
 
-
 /* Inline input styles */
-.list-table-format input {
+.list-table-format input,
+.list-table-format textarea {
   font-size: 14px;
   padding: 6px 8px;
   border: 1px solid #ccc;
   border-radius: 6px;
   width: 100%;
   box-sizing: border-box;
+}
+
+.list-table-format textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.list-table-format input[type="file"] {
+  padding: 4px;
+  font-size: 12px;
 }
 
 /* Button styles */
@@ -227,4 +237,3 @@
 .delete-btn:hover {
   color: #c13538;
 }
-
