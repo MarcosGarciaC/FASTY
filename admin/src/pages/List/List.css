@@ -178,3 +178,53 @@
     font-size: 16px;
   }
 }
+
+
+/* Inline input styles */
+.list-table-format input {
+  font-size: 14px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Button styles */
+.edit-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-actions button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.edit-actions button:hover {
+  background-color: #f0f0f0;
+}
+
+.save-btn {
+  color: #1a7f37;
+}
+
+.cancel-btn {
+  color: #e5484d;
+}
+
+.delete-btn {
+  color: #e5484d;
+}
+
+.delete-btn:hover {
+  color: #c13538;
+}
+

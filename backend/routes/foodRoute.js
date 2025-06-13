@@ -19,8 +19,7 @@ foodRouter.post("/add", upload.single("image") ,addFood)
 foodRouter.get("/list",listFood)
 foodRouter.post("/remove", removeFood);
 foodRouter.get("/list/by-cafeteria/:cafeteria_id", listFoodByCafeteriaId);
-
-
+foodRouter.put("/update", updateFood);
 
 
 export default foodRouter;
