@@ -5,160 +5,142 @@ import { toast } from "react-toastify";
 
 const List = ({ url }) => {
   const [list, setList] = useState([]);
-  const [editingFoodId, setEditingFoodId] = useState(null);
-  const [editedData, setEditedData] = useState({});
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({});
   const [imageFile, setImageFile] = useState(null);
-
-  const fetchList = async () => {
-    const userId = localStorage.getItem("user_id");
-    if (!userId) {
-      toast.error("No se encontró el ID del usuario en localStorage");
-      return;
-    }
-
-    try {
-      const cafeteriaRes = await axios.get(`${url}/api/cafetin/by-owner/${userId}`);
-      if (!cafeteriaRes.data.success || !cafeteriaRes.data.data) {
-        toast.error("No se encontró la cafetería del usuario");
-        return;
-      }
-
-      const cafeteriaId = cafeteriaRes.data.data._id;
-      const response = await axios.get(`${url}/api/food/list/by-cafeteria/${cafeteriaId}`);
-
-      if (response.data.success) {
-        setList(response.data.data);
-      } else {
-        toast.error("Error al obtener la lista de comidas");
-      }
-
-    } catch (error) {
-      console.error(error);
-      toast.error("Error al cargar los datos");
-    }
-  };
-
-  const removeFood = async (foodId) => {
-    try {
-      const response = await axios.post(`${url}/api/food/remove`, { id: foodId });
-      if (response.data.success) {
-        toast.success(response.data.message);
-        fetchList();
-      } else {
-        toast.error("Error al eliminar");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error al eliminar");
-    }
-  };
-
-  const startEdit = (food) => {
-    setEditingFoodId(food._id);
-    setEditedData({ ...food, ingredients: food.ingredients.join(", ") });
-    setImageFile(null);
-  };
-
-  const cancelEdit = () => {
-    setEditingFoodId(null);
-    setEditedData({});
-    setImageFile(null);
-  };
-
-  const saveEdit = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("id", editedData._id);
-      formData.append("name", editedData.name);
-      formData.append("category", editedData.category);
-      formData.append("price", editedData.price);
-      formData.append("description", editedData.description);
-      formData.append("ingredients", JSON.stringify(editedData.ingredients.split(",").map(item => item.trim())));
-      if (imageFile) {
-        formData.append("image", imageFile);
-      }
-
-      console.log("Datos enviados al backend:", Object.fromEntries(formData)); // Para depuración
-      const response = await axios.put(`${url}/api/food/update`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
-      if (response.data.success) {
-        toast.success(response.data.message);
-        setEditingFoodId(null);
-        setImageFile(null);
-        fetchList();
-      } else {
-        toast.error("Error al guardar");
-      }
-    } catch (error) {
-      console.error("Error en saveEdit:", error);
-      toast.error("Error al guardar");
-    }
-  };
-
-  const handleChange = (e, key) => {
-    setEditedData(prev => ({ ...prev, [key]: e.target.value }));
-  };
-
-  const handleImageChange = (e) => {
-    setImageFile(e.target.files[0]);
-  };
 
   useEffect(() => {
     fetchList();
   }, []);
 
+  const fetchList = async () => {
+    const userId = localStorage.getItem("user_id");
+    if (!userId) return toast.error("ID de usuario no encontrado");
+    try {
+      const caf = await axios.get(`${url}/api/cafetin/by-owner/${userId}`);
+      if (!caf.data.success) return toast.error("Cafetería no encontrada");
+      const foods = await axios.get(`${url}/api/food/list/by-cafeteria/${caf.data.data._id}`);
+      if (foods.data.success) setList(foods.data.data);
+    } catch (e) {
+      console.error(e);
+      toast.error("Error cargando comidas");
+    }
+  };
+
+  const startEdit = (food) => {
+    setEditingId(food._id);
+    setFormData({ ...food, ingredients: food.ingredients.join(", ") });
+    setImageFile(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setFormData({});
+    setImageFile(null);
+  };
+
+  const saveEdit = async () => {
+    try {
+      const fd = new FormData();
+      fd.append("id", formData._id);
+      ["name", "category", "price", "description"].forEach(key => fd.append(key, formData[key]));
+      fd.append("ingredients", JSON.stringify(formData.ingredients.split(",").map(s => s.trim())));
+      if (imageFile) fd.append("image", imageFile);
+
+      const res = await axios.put(`${url}/api/food/update`, fd, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      if (res.data.success) {
+        toast.success(res.data.message);
+        cancelEdit();
+        fetchList();
+      } else {
+        toast.error("Error actualizando comida");
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Error actualizando comida");
+    }
+  };
+
+  const removeFood = async (id) => {
+    try {
+      const res = await axios.post(`${url}/api/food/remove`, { id });
+      if (res.data.success) {
+        toast.success(res.data.message);
+        fetchList();
+      } else toast.error("Error al eliminar comida");
+    } catch (e) {
+      console.error(e);
+      toast.error("Error al eliminar comida");
+    }
+  };
+
+  const handleChange = (e, key) => {
+    setFormData(prev => ({ ...prev, [key]: e.target.value }));
+  };
+
+  const handleImage = e => setImageFile(e.target.files[0]);
+
   return (
-    <div>
-      <div className='list add flex-col'>
-        <p>Lista de comidas del cafetín</p>
-        <div className='list-table'>
-          <div className="list-table-format title">
-            <b>Imagen</b>
-            <b>Nombre</b>
-            <b>Categoría</b>
-            <b>Precio</b>
-            <b>Descripción</b>
-            <b>Ingredientes</b>
-            <b>Acciones</b>
+    <div className="list-container">
+      <h1>📦 Menú del Cafetín</h1>
+      <div className="cards">
+        {list.map(food => (
+          <div key={food._id} className="food-card">
+            {editingId === food._id ? (
+              <>
+                <div className="card-header">
+                  <h3>Editar: {food.name}</h3>
+                </div>
+                <div className="card-body">
+                  <label>Imagen:</label>
+                  <img src={`${url}/images/${food.image}`} alt={food.name} />
+                  <input type="file" accept="image/*" onChange={handleImage} />
+
+                  <label>Nombre:</label>
+                  <input value={formData.name} onChange={(e) => handleChange(e, 'name')} />
+
+                  <label>Categoría:</label>
+                  <input value={formData.category} onChange={(e) => handleChange(e, 'category')} />
+
+                  <label>Precio:</label>
+                  <input type="number" value={formData.price} onChange={(e) => handleChange(e, 'price')} />
+
+                  <label>Descripción:</label>
+                  <textarea value={formData.description} onChange={(e) => handleChange(e, 'description')} />
+
+                  <label>Ingredientes:</label>
+                  <textarea value={formData.ingredients} onChange={(e) => handleChange(e, 'ingredients')} />
+
+                  <div className="card-actions">
+                    <button onClick={saveEdit} className="btn-save">💾 Guardar</button>
+                    <button onClick={cancelEdit} className="btn-cancel">✖ Cancelar</button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="card-header">
+                  <h3>{food.name}</h3>
+                  <span className="price-tag">${food.price.toFixed(2)}</span>
+                </div>
+                <div className="card-body">
+                  <img src={`${url}/images/${food.image}`} alt={food.name} />
+
+                  <p><strong>Categoría:</strong> {food.category}</p>
+                  <p><strong>Descripción:</strong> {food.description}</p>
+                  <p><strong>Ingredientes:</strong> {food.ingredients.join(", ")}</p>
+
+                  <div className="card-actions">
+                    <button onClick={() => startEdit(food)} className="btn-edit">✎ Editar</button>
+                    <button onClick={() => removeFood(food._id)} className="btn-delete">🗑 Eliminar</button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-          {list.map((item, index) => (
-            <div key={index} className='list-table-format'>
-              <img src={`${url}/images/${item.image}`} alt='comida' />
-              {editingFoodId === item._id ? (
-                <>
-                  <input type="file" accept="image/*" onChange={handleImageChange} />
-                  <input value={editedData.name} onChange={(e) => handleChange(e, 'name')} />
-                  <input value={editedData.category} onChange={(e) => handleChange(e, 'category')} />
-                  <input type="number" value={editedData.price} onChange={(e) => handleChange(e, 'price')} />
-                  <input value={editedData.description} onChange={(e) => handleChange(e, 'description')} />
-                  <textarea
-                    value={editedData.ingredients}
-                    onChange={(e) => handleChange(e, 'ingredients')}
-                    placeholder="Ingredientes, separados por comas"
-                  />
-                  <div className="edit-actions">
-                    <button className="save-btn" onClick={saveEdit}>💾</button>
-                    <button className="cancel-btn" onClick={cancelEdit}>✖</button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p>{item.name}</p>
-                  <p>{item.category}</p>
-                  <p>${item.price}</p>
-                  <p>{item.description}</p>
-                  <p>{item.ingredients.join(", ")}</p>
-                  <div className="edit-actions">
-                    <button onClick={() => startEdit(item)}>✎</button>
-                    <button onClick={() => removeFood(item._id)} className="delete-btn">🗑</button>
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
+        ))}
       </div>
     </div>
   );

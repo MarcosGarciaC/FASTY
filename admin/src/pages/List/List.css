@@ -1,239 +1,127 @@
-/* Notion-inspired styling for the List component */
-.list {
-  width: 100%;
+.list-container {
   max-width: 960px;
   margin: 40px auto;
   padding: 24px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: 'Inter', sans-serif;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 600;
   color: #1a1a1a;
-  font-size: 16px;
-  line-height: 1.5;
-  box-sizing: border-box;
+  margin-bottom: 24px;
 }
 
-/* Title styling */
-.list p:first-child {
-  font-size: 20px;
-  font-weight: 600;
-  color: #37352f;
-  margin: 0 0 24px 0;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #e0e0e0;
-  text-align: left;
-}
-
-/* Table container */
-.list-table {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e0e0e0;
-}
-
-/* Table row styling */
-.list-table-format {
-  display: grid;
-  grid-template-columns: 80px 1fr 1fr 80px 2fr 2fr 60px;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  border-bottom: 1px solid #e0e0e0;
-  transition: background-color 0.2s ease;
-  min-width: 800px;
-}
-
-.list-table-format:last-child {
-  border-bottom: none;
-}
-
-.list-table-format:hover {
-  background-color: #f7f7f7;
-}
-
-/* Table header */
-.list-table-format.title {
-  background-color: #f7f7f7;
-  color: #37352f;
-  font-weight: 600;
-  font-size: 14px;
-  padding: 16px;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-/* Image styling */
-.list-table-format img {
-  width: 100%;
-  max-width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  transition: transform 0.2s ease;
-}
-
-.list-table-format img:hover {
-  transform: scale(1.02);
-}
-
-/* Text styling */
-.list-table-format p {
-  margin: 0;
-  font-size: 14px;
-  color: #1a1a1a;
-  word-break: break-word;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.list-table-format p:nth-child(3) {
-  text-transform: capitalize;
-}
-
-.list-table-format p:nth-child(4) {
-  font-weight: 500;
-  color: #37352f;
-  white-space: nowrap;
-}
-
-/* Delete button styling */
-.list-table-format p:last-child {
-  text-align: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #e5484d;
-  cursor: pointer;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.list-table-format p:last-child:hover {
-  color: #c13538;
-  transform: scale(1.1);
-}
-
-/* Responsive design */
-@media screen and (max-width: 768px) {
-  .list {
-    margin: 24px auto;
-    padding: 16px;
-  }
-
-  .list-table-format {
-    grid-template-columns: 60px 1fr 1fr 80px 1fr 1fr 60px;
-    gap: 12px;
-    padding: 12px;
-    min-width: 700px;
-  }
-
-  .list-table-format img {
-    max-width: 60px;
-    height: 60px;
-  }
-
-  .list-table-format p {
-    font-size: 13px;
-  }
-
-  .list-table-format.title {
-    font-size: 13px;
-  }
-
-  .list p:first-child {
-    font-size: 18px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .list {
-    padding: 12px;
-  }
-
-  .list-table-format {
-    grid-template-columns: 50px 1fr 1fr 60px 1fr 1fr 50px;
-    gap: 8px;
-    padding: 10px;
-    min-width: 600px;
-  }
-
-  .list-table-format img {
-    max-width: 50px;
-    height: 50px;
-  }
-
-  .list-table-format p {
-    font-size: 12px;
-  }
-
-  .list-table-format.title {
-    font-size: 12px;
-    padding: 10px;
-  }
-
-  .list p:first-child {
-    font-size: 16px;
-  }
-}
-
-/* Inline input styles */
-.list-table-format input,
-.list-table-format textarea {
-  font-size: 14px;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.list-table-format textarea {
-  resize: vertical;
-  min-height: 60px;
-}
-
-.list-table-format input[type="file"] {
-  padding: 4px;
-  font-size: 12px;
-}
-
-/* Button styles */
-.edit-actions {
+.cards {
   display: flex;
-  gap: 6px;
-  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.food-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.food-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+  padding: 16px;
+  background: #f7f7f7;
 }
 
-.edit-actions button {
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 4px 6px;
+.card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #1f2937;
+}
+
+.price-tag {
+  background: #3b82f6;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 14px;
+}
+
+.card-body {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.card-body img {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 8px;
+  align-self: center;
+}
+
+.card-body label {
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.card-body input,
+.card-body textarea {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
-  transition: background-color 0.2s ease;
 }
 
-.edit-actions button:hover {
-  background-color: #f0f0f0;
+.card-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
 }
 
-.save-btn {
-  color: #1a7f37;
+.btn-edit,
+.btn-save {
+  background: #10b981;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-.cancel-btn {
-  color: #e5484d;
+.btn-delete,
+.btn-cancel {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-.delete-btn {
-  color: #e5484d;
+.btn-save:hover,
+.btn-edit:hover {
+  background: #059669;
 }
 
-.delete-btn:hover {
-  color: #c13538;
+.btn-delete:hover,
+.btn-cancel:hover {
+  background: #dc2626;
+}
+
+@media (max-width: 600px) {
+  .card-body {
+    grid-template-columns: 1fr;
+  }
+  .food-card {
+    padding: 0;
+  }
 }
