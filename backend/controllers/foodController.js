@@ -2,40 +2,55 @@ import { log } from "console";
 import foodModel from "../models/foodModel.js";
 import fs from 'fs'
 
-// add food item
-const addFood = async (req, res) => {  
-  let image_filename = `${req.file.filename}`;
-  const food = new foodModel({
-    name: req.body.name,
-    description: req.body.description,
-    price: req.body.price,
-    category: req.body.category,
-    ingredients: req.body.ingredients,
-    is_available: req.body.is_available,
-    preparation_time: req.body.preparation_time,
-    daily_quantity: req.body.daily_quantity,
-    cafeteria_id: req.body.cafeteria_id,
-    image: image_filename
-  })
-  try {
-    await food.save();
-    res.json({ success: true, message: "Food Added" })
-  } catch (error) {
-    console.log(error)
-    res.json({ success: false, message: "Error" })
-  }
-}
+const addFood = async (req, res) => {
+  const file = req.file;
+  const image_filename = `${Date.now()}_${file.originalname}`;
 
-// all food list
-const listFood = async (req, res) => {
   try {
-    const foods = await foodModel.find({});
-    res.json({ success: true, data: foods })
+    const filePath = path.join('uploads', file.filename);
+    const fileBuffer = fs.readFileSync(filePath);
+
+    // Subir imagen al bucket "foods"
+    const { error: uploadError } = await supabase.storage
+      .from('foods')
+      .upload(image_filename, fileBuffer, {
+        contentType: file.mimetype,
+        upsert: true
+      });
+
+    if (uploadError) throw uploadError;
+
+    // Obtener URL pública
+    const { data: { publicUrl } } = supabase
+      .storage
+      .from('foods')
+      .getPublicUrl(image_filename);
+
+    const food = new foodModel({
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      category: req.body.category,
+      ingredients: req.body.ingredients,
+      is_available: req.body.is_available,
+      preparation_time: req.body.preparation_time,
+      daily_quantity: req.body.daily_quantity,
+      cafeteria_id: req.body.cafeteria_id,
+      image: publicUrl
+    });
+
+    await food.save();
+
+    // Opcional: elimina la imagen local
+    fs.unlinkSync(filePath);
+
+    res.json({ success: true, message: "Food Added", data: food });
+
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: "Error" })
+    console.error(error);
+    res.json({ success: false, message: "Error adding food" });
   }
-}
+};
 
 // remove food item
 const removeFood = async (req, res) => {
