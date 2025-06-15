@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
 
   const validateToken = async (token) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/validate`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/validate` , {
         headers: { Authorization: `Bearer ${token}` }
       });
 
