@@ -15,15 +15,15 @@ const List = ({ url }) => {
 
   const fetchList = async () => {
     const userId = localStorage.getItem("user_id");
-    if (!userId) return toast.error("ID de usuario no encontrado");
+    if (!userId) return toast.error("User ID not found");
     try {
       const caf = await axios.get(`${url}/api/cafetin/by-owner/${userId}`);
-      if (!caf.data.success) return toast.error("Cafetería no encontrada");
+      if (!caf.data.success) return toast.error("Cafeteria not found");
       const foods = await axios.get(`${url}/api/food/list/by-cafeteria/${caf.data.data._id}`);
       if (foods.data.success) setList(foods.data.data);
     } catch (e) {
       console.error(e);
-      toast.error("Error cargando comidas");
+      toast.error("Error loading foods");
     }
   };
 
@@ -55,11 +55,11 @@ const List = ({ url }) => {
         cancelEdit();
         fetchList();
       } else {
-        toast.error("Error actualizando comida");
+        toast.error("Error updating food");
       }
     } catch (e) {
       console.error(e);
-      toast.error("Error actualizando comida");
+      toast.error("Error updating food");
     }
   };
 
@@ -69,10 +69,10 @@ const List = ({ url }) => {
       if (res.data.success) {
         toast.success(res.data.message);
         fetchList();
-      } else toast.error("Error al eliminar comida");
+      } else toast.error("Error deleting food");
     } catch (e) {
       console.error(e);
-      toast.error("Error al eliminar comida");
+      toast.error("Error deleting food");
     }
   };
 
@@ -84,57 +84,69 @@ const List = ({ url }) => {
 
   return (
     <div className="list-container">
-      <h1>📦 Menú del Cafetín</h1>
-      <div className="cards">
+      <h1>Menu Items</h1>
+      <div className="food-grid">
         {list.map(food => (
           <div key={food._id} className="food-card">
             {editingId === food._id ? (
-              <>
-                <div className="card-header">
-                  <h3>Editar: {food.name}</h3>
+              <div className="edit-form">
+                <div className="form-header">
+                  <h3>Edit: {food.name}</h3>
                 </div>
-                <div className="card-body">
-                  <label>Imagen:</label>
-                  <img src={`${url}/images/${food.image}`} alt={food.name} />
-                  <input type="file" accept="image/*" onChange={handleImage} />
+                <div className="form-body">
+                  <div className="form-group">
+                    <label>Image</label>
+                    <img src={`${url}/images/${food.image}`} alt={food.name} />
+                    <input type="file" accept="image/*" onChange={handleImage} />
+                  </div>
 
-                  <label>Nombre:</label>
-                  <input value={formData.name} onChange={(e) => handleChange(e, 'name')} />
+                  <div className="form-group">
+                    <label>Name</label>
+                    <input value={formData.name} onChange={(e) => handleChange(e, 'name')} />
+                  </div>
 
-                  <label>Categoría:</label>
-                  <input value={formData.category} onChange={(e) => handleChange(e, 'category')} />
+                  <div className="form-group">
+                    <label>Category</label>
+                    <input value={formData.category} onChange={(e) => handleChange(e, 'category')} />
+                  </div>
 
-                  <label>Precio:</label>
-                  <input type="number" value={formData.price} onChange={(e) => handleChange(e, 'price')} />
+                  <div className="form-group">
+                    <label>Price</label>
+                    <input type="number" value={formData.price} onChange={(e) => handleChange(e, 'price')} />
+                  </div>
 
-                  <label>Descripción:</label>
-                  <textarea value={formData.description} onChange={(e) => handleChange(e, 'description')} />
+                  <div className="form-group">
+                    <label>Description</label>
+                    <textarea value={formData.description} onChange={(e) => handleChange(e, 'description')} />
+                  </div>
 
-                  <label>Ingredientes:</label>
-                  <textarea value={formData.ingredients} onChange={(e) => handleChange(e, 'ingredients')} />
+                  <div className="form-group">
+                    <label>Ingredients</label>
+                    <textarea value={formData.ingredients} onChange={(e) => handleChange(e, 'ingredients')} />
+                  </div>
 
-                  <div className="card-actions">
-                    <button onClick={saveEdit} className="btn-save">💾 Guardar</button>
-                    <button onClick={cancelEdit} className="btn-cancel">✖ Cancelar</button>
+                  <div className="form-actions">
+                    <button onClick={saveEdit} className="save-btn">Save</button>
+                    <button onClick={cancelEdit} className="cancel-btn">Cancel</button>
                   </div>
                 </div>
-              </>
+              </div>
             ) : (
               <>
                 <div className="card-header">
                   <h3>{food.name}</h3>
-                  <span className="price-tag">${food.price.toFixed(2)}</span>
+                  <span className="price">${food.price.toFixed(2)}</span>
                 </div>
                 <div className="card-body">
                   <img src={`${url}/images/${food.image}`} alt={food.name} />
-
-                  <p><strong>Categoría:</strong> {food.category}</p>
-                  <p><strong>Descripción:</strong> {food.description}</p>
-                  <p><strong>Ingredientes:</strong> {food.ingredients.join(", ")}</p>
-
+                  <div className="card-details">
+                    <p><span>Category:</span> {food.category}</p>
+                    <p><span>Description:</span> {food.description}</p>
+                    <p><span>Ingredients:</span> {food.ingredients.join(", ")}</p>
+                  </div>
                   <div className="card-actions">
-                    <button onClick={() => startEdit(food)} className="btn-edit">✎ Editar</button>
-                    <button onClick={() => removeFood(food._id)} className="btn-delete">🗑 Eliminar</button>
+                    <button onClick={() => startEdit(food)} className="edit-btn">Edit</button>
+                    <button onClick={() => removeFood(food._id)} className="delete-btn">Delete</button>
                   </div>
                 </div>
               </>

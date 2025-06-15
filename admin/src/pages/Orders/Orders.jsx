@@ -26,11 +26,10 @@ const Orders = () => {
     };
 
     if (cafeteriaId) {
-      fetchOrders(); // llamada inicial
-      intervalId = setInterval(fetchOrders, 5000); // polling cada 5 segundos
+      fetchOrders();
+      intervalId = setInterval(fetchOrders, 5000);
     }
 
-    // Limpiar el intervalo cuando se desmonte el componente
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
@@ -59,8 +58,6 @@ const Orders = () => {
             )
           );
         }, 1500);
-      } else {
-        console.error("Failed to update status");
       }
     } catch (error) {
       console.error("Error updating status:", error);
@@ -72,7 +69,7 @@ const Orders = () => {
     const pickup = new Date(pickupTime);
     const diffMs = pickup - now;
 
-    if (diffMs <= 0) return "Tiempo vencido";
+    if (diffMs <= 0) return "Time expired";
 
     const mins = Math.floor(diffMs / 60000);
     const hours = Math.floor(mins / 60);
@@ -81,8 +78,8 @@ const Orders = () => {
     return `${hours > 0 ? hours + "h " : ""}${remMins}min`;
   };
 
-  if (loading) return <div>Loading orders...</div>;
-  if (!cafeteriaId) return <div>Error: No cafeteria_id found in localStorage</div>;
+  if (loading) return <div className="loading">Loading orders...</div>;
+  if (!cafeteriaId) return <div className="error">No cafeteria ID found</div>;
 
   const pendingOrders = orders
     .filter(order => order.status !== 'completed')
@@ -91,79 +88,73 @@ const Orders = () => {
   const completedOrders = orders.filter(order => order.status === 'completed');
 
   const renderOrder = (order) => (
-    <div key={order._id} className={`order-item ${order.updated ? 'status-updated' : ''}`}>
-      <div data-label="Customer:">{order.user_id?.name || 'Unknown'}</div>
-
-      <div className="order-items" data-label="Items:">
-        {order.items.map((item, idx) => (
-          <div key={idx}>
-            {item.food_id?.name || 'Unknown'} × {item.quantity} (${(item.food_id?.price * item.quantity).toFixed(2)})
-          </div>
-        ))}
-      </div>
-
-      <div data-label="Total:">${order.total_amount.toFixed(2)}</div>
-
-      <div data-label="Pickup Time:">
-        {new Date(order.pickup_time).toLocaleString()}
-        <div className="time-remaining">({getTimeRemaining(order.pickup_time)} restantes)</div>
-      </div>
-
-      <div className="order-status" data-label="Status:">
-        <select value={order.status} onChange={(e) => handleStatusChange(order._id, e.target.value)}>
-          {statusOptions.map(status => (
-            <option key={status} value={status}>{status}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="order-payment" data-label="Payment:">
-        <div>{order.payment_method}</div>
-        <div className={`payment-status ${order.payment_status?.toLowerCase() || "pending"}`}>
-          {order.payment_status || "Pending"}
+    <div key={order._id} className={`order-item ${order.status} ${order.updated ? 'updated' : ''}`}>
+      <div className="order-header">
+        <div className="order-meta">
+          <span className="order-number">#{order.confirmation_code}</span>
+          <span className="order-customer">{order.user_id?.name || 'Customer'}</span>
+        </div>
+        <div className="order-time">
+          {new Date(order.pickup_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          <span className="time-remaining">{getTimeRemaining(order.pickup_time)}</span>
         </div>
       </div>
 
-      <div data-label="Confirmation:">{order.confirmation_code}</div>
+      <div className="order-details">
+        <div className="order-items">
+          {order.items.map((item, idx) => (
+            <div key={idx} className="order-item-row">
+              <span>{item.food_id?.name || 'Item'} × {item.quantity}</span>
+              <span>${(item.food_id?.price * item.quantity).toFixed(2)}</span>
+            </div>
+          ))}
+        </div>
 
-      <div className="order-details" data-label="Customer Feedback:">
-        <h4>Customer Feedback:</h4>
-        {order.feedback ? <p>{order.feedback}</p> : <p className="no-feedback">No feedback yet</p>}
+        <div className="order-footer">
+          <div className="order-total">Total: ${order.total_amount.toFixed(2)}</div>
+          <div className="order-status">
+            <select 
+              value={order.status} 
+              onChange={(e) => handleStatusChange(order._id, e.target.value)}
+            >
+              {statusOptions.map(status => (
+                <option key={status} value={status}>{status}</option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
     </div>
   );
 
   return (
     <div className="orders-container">
-      <h1>Orders</h1>
+      <header className="orders-header">
+        <h1>Orders</h1>
+        <div className="refresh-info">Auto-refreshing every 5 seconds</div>
+      </header>
 
-      <h2>📌 Pending Orders</h2>
-      <div className="orders-header">
-        <div className="header-info">Customer</div>
-        <div className="header-info">Items</div>
-        <div className="header-info">Total</div>
-        <div className="header-info">Pickup Time</div>
-        <div className="header-info">Status</div>
-        <div className="header-info">Payment</div>
-        <div className="header-info">Confirmation</div>
-      </div>
-      <div className="orders-list">
-        {pendingOrders.map(renderOrder)}
-      </div>
+      <section className="orders-section">
+        <h2>Pending ({pendingOrders.length})</h2>
+        {pendingOrders.length > 0 ? (
+          <div className="orders-list">
+            {pendingOrders.map(renderOrder)}
+          </div>
+        ) : (
+          <div className="empty-state">No pending orders</div>
+        )}
+      </section>
 
-      <h2>✅ Completed Orders</h2>
-      <div className="orders-header">
-        <div className="header-info">Customer</div>
-        <div className="header-info">Items</div>
-        <div className="header-info">Total</div>
-        <div className="header-info">Pickup Time</div>
-        <div className="header-info">Status</div>
-        <div className="header-info">Payment</div>
-        <div className="header-info">Confirmation</div>
-      </div>
-      <div className="orders-list">
-        {completedOrders.map(renderOrder)}
-      </div>
+      <section className="orders-section">
+        <h2>Completed ({completedOrders.length})</h2>
+        {completedOrders.length > 0 ? (
+          <div className="orders-list">
+            {completedOrders.map(renderOrder)}
+          </div>
+        ) : (
+          <div className="empty-state">No completed orders</div>
+        )}
+      </section>
     </div>
   );
 };

@@ -9,6 +9,7 @@ import Login from './pages/Login/Login';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider, AuthContext } from './Context/AuthContext';
+import Profile from './pages/Profile/Profile';
 
 const url = import.meta.env.VITE_API_BASE_URL;
 
@@ -28,21 +29,19 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      {/* Ruta pública */}
       <Route path="/login" element={
         auth.isAuthenticated ? <Navigate to="/dashboard" /> : <Login />
       } />
 
-      {/* Rutas protegidas */}
       <Route element={auth.isAuthenticated ? <ProtectedLayout /> : <Navigate to="/login" />}>
         <Route path="/add" element={<Add url={url} />} />
         <Route path="/list" element={<List url={url} />} />
         <Route path="/orders" element={<Orders url={url} />} />
         <Route path="/dashboard" element={<Navigate to="/list" />} />
         <Route path="/" element={<Navigate to="/list" />} />
+        <Route path='/profile' element={<Profile/>}/>
       </Route>
 
-      {/* Redirección por defecto */}
       <Route path="*" element={
         auth.isAuthenticated ? <Navigate to="/list" /> : <Navigate to="/login" />
       } />

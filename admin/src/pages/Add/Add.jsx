@@ -17,34 +17,32 @@ const Add = ({ url }) => {
     cafeteria_id: ""
   });
 
-  // Obtener el ID del usuario (cafetería) desde localStorage
-useEffect(() => {
-  const fetchCafeteriaId = async () => {
-    const userId = localStorage.getItem('user_id'); // asegurarte de que este sea el campo correcto
-    if (!userId) {
-      toast.error("No se encontró el ID del usuario en localStorage");
-      return;
-    }
-
-    try {
-      const response = await axios.get(`${url}/api/cafetin/by-owner/${userId}`);
-      if (response.data.success) {
-        setData(prev => ({
-          ...prev,
-          cafeteria_id: response.data.data._id
-        }));
-      } else {
-        toast.error("No se encontró una cafetería asociada a este usuario");
+  useEffect(() => {
+    const fetchCafeteriaId = async () => {
+      const userId = localStorage.getItem('user_id');
+      if (!userId) {
+        toast.error("User ID not found");
+        return;
       }
-    } catch (error) {
-      console.error("Error fetching cafeteria:", error);
-      toast.error("Error al obtener el ID de la cafetería");
-    }
-  };
 
-  fetchCafeteriaId();
-}, [url]);
+      try {
+        const response = await axios.get(`${url}/api/cafetin/by-owner/${userId}`);
+        if (response.data.success) {
+          setData(prev => ({
+            ...prev,
+            cafeteria_id: response.data.data._id
+          }));
+        } else {
+          toast.error("No cafeteria found for this user");
+        }
+      } catch (error) {
+        console.error("Error fetching cafeteria:", error);
+        toast.error("Error getting cafeteria ID");
+      }
+    };
 
+    fetchCafeteriaId();
+  }, [url]);
 
   const onChangeHandler = (event) => {
     const { name, value, type, checked } = event.target;
@@ -81,108 +79,125 @@ useEffect(() => {
           is_available: true,
           preparation_time: "",
           daily_quantity: "",
-          cafeteria_id: data.cafeteria_id // mantener el mismo ID
+          cafeteria_id: data.cafeteria_id
         });
         setImage(null);
         toast.success(response.data.message);
       } else {
-        toast.error(response.data.message || "Error al agregar comida");
+        toast.error(response.data.message || "Error adding food");
       }
     } catch (error) {
-      toast.error("No se pudo enviar la solicitud");
+      toast.error("Request failed");
       console.error(error);
     }
   };
 
-  localStorage.setItem("cafeteria_id", data.cafeteria_id);
-
-
   return (
-    <div className="add">
-      <form className="flex-col" onSubmit={onSubmitHandler}>
-        <div className="add-img-upload flex-col">
-          <p>Subir Imagen</p>
-          <label htmlFor="image">
-            {image ? (
-              <img src={URL.createObjectURL(image)} alt="preview" />
-            ) : (
-              <i className="fa-solid fa-cloud-arrow-up fa-4x"></i>
-            )}
-          </label>
-          <input
-            onChange={(e) => setImage(e.target.files[0])}
-            type="file"
-            id="image"
-            required
-            hidden
+    <div className="add-form-container">
+      <form className="food-form" onSubmit={onSubmitHandler}>
+        <h2>Add New Food Item</h2>
+        
+        <div className="form-group image-upload">
+          <label>Upload Image</label>
+          <div className="image-preview">
+            <label htmlFor="image">
+              {image ? (
+                <img src={URL.createObjectURL(image)} alt="preview" />
+              ) : (
+                <div className="upload-placeholder">
+                <i className="fa-solid fa-cloud-arrow-up fa-4x"></i>
+
+                </div>
+              )}
+            </label>
+            <input
+              onChange={(e) => setImage(e.target.files[0])}
+              type="file"
+              id="image"
+              required
+              hidden
+            />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label>Product Name</label>
+          <input 
+            onChange={onChangeHandler} 
+            value={data.name} 
+            type="text" 
+            name="name" 
+            placeholder="e.g. Fried Chicken" 
           />
         </div>
 
-        <div className="add-product-name flex-col">
-          <p>Nombre del producto</p>
-          <input onChange={onChangeHandler} value={data.name} type="text" name="name" placeholder="Ej: Pollo frito" />
-        </div>
-
-        <div className="add-product-description flex-col">
-          <p>Descripción del producto</p>
+        <div className="form-group">
+          <label>Description</label>
           <textarea
             onChange={onChangeHandler}
             value={data.description}
             name="description"
-            rows="4"
-            placeholder="Describe el platillo..."
+            rows="3"
+            placeholder="Describe the dish..."
           />
         </div>
 
-        <div className="add-category-price">
-          <div className="add-category flex-col">
-            <p>Categoría</p>
+        <div className="form-row">
+          <div className="form-group">
+            <label>Category</label>
             <select onChange={onChangeHandler} value={data.category} name="category">
-              <option value="Almuerzo">Almuerzo</option>
-              <option value="Bebidas">Bebidas</option>
-              <option value="Salad">Ensalada</option>
+              <option value="Almuerzo">Lunch</option>
+              <option value="Bebida">Drinks</option>
+              <option value="Snack">Salad</option>
             </select>
           </div>
-          <div className="add-price flex-col">
-            <p>Precio</p>
-            <input onChange={onChangeHandler} value={data.price} type="number" name="price" placeholder="Ej: 50" />
+          <div className="form-group">
+            <label>Price</label>
+            <input 
+              onChange={onChangeHandler} 
+              value={data.price} 
+              type="number" 
+              name="price" 
+              placeholder="e.g. 50" 
+            />
           </div>
         </div>
 
-        <div className="flex-col">
-          <p>Ingredientes</p>
+        <div className="form-group">
+          <label>Ingredients</label>
           <textarea
             onChange={onChangeHandler}
             value={data.ingredients}
             name="ingredients"
             rows="2"
-            placeholder="Ej: arroz, pollo, ensalada"
+            placeholder="e.g. rice, chicken, salad"
           />
         </div>
 
-        <div className="flex-col">
-          <p>Tiempo de preparación (min)</p>
-          <input
-            onChange={onChangeHandler}
-            value={data.preparation_time}
-            type="number"
-            name="preparation_time"
-            placeholder="Ej: 15"
-          />
+        <div className="form-row">
+          <div className="form-group">
+            <label>Prep Time (min)</label>
+            <input
+              onChange={onChangeHandler}
+              value={data.preparation_time}
+              type="number"
+              name="preparation_time"
+              placeholder="e.g. 15"
+            />
+          </div>
+          <div className="form-group">
+            <label>Daily Quantity</label>
+            <input
+              onChange={onChangeHandler}
+              value={data.daily_quantity}
+              type="number"
+              name="daily_quantity"
+              placeholder="e.g. 30"
+            />
+          </div>
         </div>
 
-        <div className="flex-col">
-          <p>Cantidad diaria disponible</p>
-          <input
-            onChange={onChangeHandler}
-            value={data.daily_quantity}
-            type="number"
-            name="daily_quantity"
-            placeholder="Ej: 30"
-          />
-        </div>
-
-        <div className="flex-col">
+        <div className="form-group checkbox-group">
           <label>
             <input
               type="checkbox"
@@ -190,22 +205,17 @@ useEffect(() => {
               checked={data.is_available}
               onChange={onChangeHandler}
             />
-            Disponible
+            Available
           </label>
         </div>
 
-        <div className="flex-col" hidden>
-          <p hidden>ID de Cafetería</p>
-          <input
-            hidden
-            value={data.cafeteria_id}
-            type="text"
-            name="cafeteria_id"
-            readOnly
-          />
-        </div>
+        <input
+          type="hidden"
+          value={data.cafeteria_id}
+          name="cafeteria_id"
+        />
 
-        <button type="submit" className="add-btn">Agregar</button>
+        <button type="submit" className="submit-btn">Add Item</button>
       </form>
     </div>
   );

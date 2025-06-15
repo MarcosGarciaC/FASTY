@@ -62,17 +62,6 @@ useEffect(() => {
         <p><strong>Método de Pago:</strong> {order.payment_method}</p>
         {order.feedback && <p><strong>Feedback:</strong> {order.feedback}</p>}
         {order.rating > 0 && <p><strong>Calificación:</strong> {order.rating} / 5</p>}
-        <div className="order-items">
-          <h4>Items:</h4>
-          <ul>
-            {order.items.map((item, index) => (
-              <li key={index}>
-                <span>{item.food_id?.name || 'Item desconocido'} (x{item.quantity})</span>
-                <span>${(item.food_id?.price * item.quantity).toFixed(2)}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
       <div className="confirmation-actions">
         <button className="confirmation-button" onClick={() => navigate('/orders')}>
