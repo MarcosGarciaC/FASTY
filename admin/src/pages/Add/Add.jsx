@@ -68,11 +68,7 @@ const Add = ({ url }) => {
     formData.append("image", image);
 
     try {
-      const response = await axios.post(`${url}/api/food/add`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const response = await axios.post(`${url}/api/food/add`, formData);
       if (response.data.success) {
         setData({
           name: "",
@@ -109,7 +105,8 @@ const Add = ({ url }) => {
                 <img src={URL.createObjectURL(image)} alt="preview" />
               ) : (
                 <div className="upload-placeholder">
-                  <i className="fa-solid fa-cloud-arrow-up fa-4x"></i>
+                <i className="fa-solid fa-cloud-arrow-up fa-4x"></i>
+
                 </div>
               )}
             </label>
@@ -151,7 +148,7 @@ const Add = ({ url }) => {
             <select onChange={onChangeHandler} value={data.category} name="category">
               <option value="Almuerzo">Lunch</option>
               <option value="Bebida">Drinks</option>
-              <option value="Snack">Snack</option>
+              <option value="Snack">Salad</option>
             </select>
           </div>
           <div className="form-group">
