@@ -121,7 +121,7 @@ const Order = () => {
             {completedOrders.map((order) => (
               <div key={order._id} className="order-card">
                 <h3>Orden #{order.confirmation_code}</h3>
-                <p><strong>Cafetería:</strong> {order.cafeteria_id?.name || 'Desconocida'}</p>
+                <p><strong>Cafetería :</strong> {order.cafeteria_id?.name || 'Desconocida'}</p>
                 <p>
                   <strong>Estado:</strong>{' '}
                   <span className={`order-status ${order.status}`}>
