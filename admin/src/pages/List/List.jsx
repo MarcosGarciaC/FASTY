@@ -13,12 +13,14 @@ const List = ({ url }) => {
     fetchList();
   }, []);
 
-  const fetchList = async () => {
+const fetchList = async () => {
     const userId = localStorage.getItem("user_id");
     if (!userId) return toast.error("User ID not found");
     try {
       const caf = await axios.get(`${url}/api/cafetin/by-owner/${userId}`);
       if (!caf.data.success) return toast.error("Cafeteria not found");
+      // Save cafeteria_id to localStorage
+      localStorage.setItem("cafeteria_id", caf.data.data._id);
       const foods = await axios.get(`${url}/api/food/list/by-cafeteria/${caf.data.data._id}`);
       if (foods.data.success) setList(foods.data.data);
     } catch (e) {
