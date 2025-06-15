@@ -6,7 +6,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const cafeteriaId = localStorage.getItem("cafeteria_id");
 
-  const statusOptions = ['pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled'];
+  const statusOptions = ['pending', 'completed'];
 
   useEffect(() => {
     let intervalId;
