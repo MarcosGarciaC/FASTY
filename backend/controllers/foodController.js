@@ -2,6 +2,7 @@ import { log } from "console";
 import foodModel from "../models/foodModel.js";
 import fs from 'fs'
 import { v4 as uuidv4 } from 'uuid';
+import supabase from "../config/supabaseClient.js";
 
 // add food item with Supabase upload
 const addFood = async (req, res) => {
