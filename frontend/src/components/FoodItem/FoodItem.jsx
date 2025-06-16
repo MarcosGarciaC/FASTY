@@ -13,7 +13,11 @@ const FoodItem = ({ id, name, price, description, image, rating, cafeteria_id })
   return (
     <div className='food-item'>
       <div className='food-item-img-container'>
-        <img className='food-item-image' src={url + "/images/" + image} alt={name} />
+        {image ? (
+          <img className='food-item-image' src={image} alt={name} />
+        ) : (
+          <p className='no-image'>No image available</p>
+        )}
       </div>
       <div className="food-item-info">
         <div className="food-item-name-rating">

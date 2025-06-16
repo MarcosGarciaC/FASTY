@@ -13,18 +13,20 @@ const List = ({ url }) => {
     fetchList();
   }, []);
 
-const fetchList = async () => {
+  const fetchList = async () => {
     const userId = localStorage.getItem("user_id");
     if (!userId) return toast.error("User ID not found");
     try {
       const caf = await axios.get(`${url}/api/cafetin/by-owner/${userId}`);
       if (!caf.data.success) return toast.error("Cafeteria not found");
-      // Save cafeteria_id to localStorage
       localStorage.setItem("cafeteria_id", caf.data.data._id);
       const foods = await axios.get(`${url}/api/food/list/by-cafeteria/${caf.data.data._id}`);
-      if (foods.data.success) setList(foods.data.data);
+      if (foods.data.success) {
+        console.log("Fetched foods:", foods.data.data);
+        setList(foods.data.data);
+      }
     } catch (e) {
-      console.error(e);
+      console.error("Fetch list error:", e);
       toast.error("Error loading foods");
     }
   };
@@ -60,7 +62,7 @@ const fetchList = async () => {
         toast.error("Error updating food");
       }
     } catch (e) {
-      console.error(e);
+      console.error("Save edit error:", e);
       toast.error("Error updating food");
     }
   };
@@ -73,7 +75,7 @@ const fetchList = async () => {
         fetchList();
       } else toast.error("Error deleting food");
     } catch (e) {
-      console.error(e);
+      console.error("Remove food error:", e);
       toast.error("Error deleting food");
     }
   };
@@ -82,7 +84,13 @@ const fetchList = async () => {
     setFormData(prev => ({ ...prev, [key]: e.target.value }));
   };
 
-  const handleImage = e => setImageFile(e.target.files[0]);
+  const handleImage = e => {
+    const file = e.target.files[0];
+    if (file) {
+      console.log("Selected image:", { name: file.name, size: file.size, type: file.type });
+      setImageFile(file);
+    }
+  };
 
   return (
     <div className="list-container">
@@ -98,7 +106,11 @@ const fetchList = async () => {
                 <div className="form-body">
                   <div className="form-group">
                     <label>Image</label>
-                    <img src={`${url}/images/${food.image}`} alt={food.name} />
+                    {food.image ? (
+                      <img src={food.image} alt={food.name} className="edit-image-preview" />
+                    ) : (
+                      <p>No image available</p>
+                    )}
                     <input type="file" accept="image/*" onChange={handleImage} />
                   </div>
 
@@ -140,7 +152,11 @@ const fetchList = async () => {
                   <span className="price">${food.price.toFixed(2)}</span>
                 </div>
                 <div className="card-body">
-                  <img src={`${url}/images/${food.image}`} alt={food.name} />
+                  {food.image ? (
+                    <img src={food.image} alt={food.name} className="food-image" />
+                  ) : (
+                    <p>No image available</p>
+                  )}
                   <div className="card-details">
                     <p><span>Category:</span> {food.category}</p>
                     <p><span>Description:</span> {food.description}</p>

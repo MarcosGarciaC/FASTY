@@ -1,14 +1,13 @@
-import React, { useContext, useState } from 'react'
-import './Cart.css'
-import { StoreContext } from '../../context/StoreContext'
-import { useNavigate } from 'react-router-dom'
-import Flatpickr from 'react-flatpickr'
-import 'flatpickr/dist/themes/material_blue.css' // Puedes elegir otro tema si quieres
-
+import React, { useContext, useState } from 'react';
+import './Cart.css';
+import { StoreContext } from '../../context/StoreContext';
+import { useNavigate } from 'react-router-dom';
+import Flatpickr from 'react-flatpickr';
+import 'flatpickr/dist/themes/material_blue.css';
 
 const Cart = () => {
-  const { cartItems, food_list, removeFromCart, getTotalCartAmount, url } = useContext(StoreContext)
-  const navigate = useNavigate()
+  const { cartItems, food_list, removeFromCart, getTotalCartAmount, url } = useContext(StoreContext);
+  const navigate = useNavigate();
 
   const getDefaultPickupTime = () => {
     const now = new Date();
@@ -16,76 +15,73 @@ const Cart = () => {
     now.setSeconds(0);
     now.setMilliseconds(0);
     return now;
-  }
-
-
-
+  };
 
   // Estados para los nuevos campos
-  const [pickupTime, setPickupTime] = useState(getDefaultPickupTime())
-  const [feedback, setFeedback] = useState('')
-  const [rating, setRating] = useState(0)
-  const [validationError, setValidationError] = useState('')
+  const [pickupTime, setPickupTime] = useState(getDefaultPickupTime());
+  const [feedback, setFeedback] = useState('');
+  const [rating, setRating] = useState(0);
+  const [validationError, setValidationError] = useState('');
 
   // Calcular la hora mínima (ahora + 15 minutos)
   const getMinPickupTime = () => {
-    const now = new Date()
-    now.setMinutes(now.getMinutes() + 15)
-    return now.toISOString().slice(0, 16)
-  }
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 15);
+    return now.toISOString().slice(0, 16);
+  };
 
   // Validar el tiempo de recogida
   const validatePickupTime = (time) => {
     if (!time) {
-      setValidationError('Por favor seleccione una hora de retiro')
-      return false
+      setValidationError('Por favor seleccione una hora de retiro');
+      return false;
     }
 
-    const selectedTime = new Date(time).getTime()
-    const minTime = new Date()
-    minTime.setMinutes(minTime.getMinutes() + 15)
+    const selectedTime = new Date(time).getTime();
+    const minTime = new Date();
+    minTime.setMinutes(minTime.getMinutes() + 15);
 
     if (selectedTime < minTime.getTime()) {
-      setValidationError('La hora de retiro debe ser al menos 15 min después de ahora')
-      return false
+      setValidationError('La hora de retiro debe ser al menos 15 min después de ahora');
+      return false;
     }
 
-    setValidationError('')
-    return true
-  }
+    setValidationError('');
+    return true;
+  };
 
   // Manejar cambio en el tiempo de recogida
   const handlePickupTimeChange = (e) => {
-    const time = e.target.value
-    setPickupTime(time)
-    validatePickupTime(time)
-  }
+    const time = e.target.value;
+    setPickupTime(time);
+    validatePickupTime(time);
+  };
 
   // Calcular totales
   const subtotal = food_list.reduce((total, item) => {
     if (cartItems[item._id] > 0) {
-      return total + (item.price * cartItems[item._id])
+      return total + (item.price * cartItems[item._id]);
     }
-    return total
-  }, 0)
+    return total;
+  }, 0);
 
-  const deliveryFee = 2 // Tarifa fija de envío
-  const total = subtotal + deliveryFee
+  const deliveryFee = 2; // Tarifa fija de envío
+  const total = subtotal + deliveryFee;
 
   // Manejar el envío al checkout
   const handleProceedToCheckout = () => {
     if (!validatePickupTime(pickupTime)) {
-      return
+      return;
     }
 
     // Guardar los datos adicionales en el localStorage para usarlos en PlaceOrder
-    localStorage.setItem('orderFeedback', feedback)
-    localStorage.setItem('orderRating', rating.toString())
-    localStorage.setItem('pickupTime', pickupTime)
+    localStorage.setItem('orderFeedback', feedback);
+    localStorage.setItem('orderRating', rating.toString());
+    localStorage.setItem('pickupTime', pickupTime);
 
     // Navegar a la página de checkout
-    navigate('/order')
-  }
+    navigate('/order');
+  };
 
   return (
     <div className='cart'>
@@ -106,16 +102,20 @@ const Cart = () => {
               if (cartItems[item._id] > 0) {
                 return (
                   <div key={item._id} className='cart-items-item'>
-                    <img src={`${url}/images/${item.image}`} alt={item.name} />
+                    {item.image ? (
+                      <img src={item.image} alt={item.name} className='cart-item-image' />
+                    ) : (
+                      <p className='no-image'>No image available</p>
+                    )}
                     <p>{item.name}</p>
                     <p>${item.price.toFixed(2)}</p>
                     <p>{cartItems[item._id]}</p>
                     <p>${(item.price * cartItems[item._id]).toFixed(2)}</p>
                     <p onClick={() => removeFromCart(item._id)} className='cross'>×</p>
                   </div>
-                )
+                );
               }
-              return null
+              return null;
             })}
           </div>
         </div>
@@ -151,12 +151,12 @@ const Cart = () => {
                     dateFormat: 'h:i K', // formato 12h con AM/PM
                     time_24hr: false,
                     minuteIncrement: 1,
-                    defaultDate: getDefaultPickupTime(), // esta es la clave
+                    defaultDate: getDefaultPickupTime(),
                   }}
                   value={pickupTime}
                   onChange={(selectedDates) => {
-                    const now = new Date()
-                    const selectedTime = selectedDates[0]
+                    const now = new Date();
+                    const selectedTime = selectedDates[0];
 
                     // Combinar fecha de hoy con hora seleccionada
                     const combinedDate = new Date(
@@ -165,14 +165,12 @@ const Cart = () => {
                       now.getDate(),
                       selectedTime.getHours(),
                       selectedTime.getMinutes()
-                    )
+                    );
 
-                    setPickupTime(combinedDate)
-                    validatePickupTime(combinedDate.toISOString())
+                    setPickupTime(combinedDate);
+                    validatePickupTime(combinedDate.toISOString());
                   }}
                 />
-
-
                 {validationError && (
                   <p className="error-message" style={{ color: 'red', fontSize: '0.8rem' }}>
                     {validationError}
@@ -266,7 +264,7 @@ const Cart = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Cart
+export default Cart;
