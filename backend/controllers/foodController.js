@@ -4,7 +4,6 @@ import fs from 'fs'
 import { v4 as uuidv4 } from 'uuid';
 import supabase from "../config/supabaseClient.js";
 
-// add food item with Supabase upload
 const addFood = async (req, res) => {
   try {
     let imageUrl = '';
@@ -14,22 +13,29 @@ const addFood = async (req, res) => {
       const filePath = `foods/${uuidv4()}.${ext}`;
 
       const { data, error } = await supabase.storage
-        .from('foods')  // nombre de tu bucket
+        .from('foods')
         .upload(filePath, req.file.buffer, {
           contentType: req.file.mimetype,
         });
 
       if (error) {
-        console.log("Upload Error:", error);
-        return res.status(500).json({ success: false, message: "Error uploading image" });
+        console.error("Supabase Upload Error:", error.message, error);
+        return res.status(500).json({ success: false, message: "Error uploading image", error: error.message });
       }
 
-      const { data: publicUrlData } = supabase
-        .storage
+      const { data: publicUrlData } = supabase.storage
         .from('foods')
         .getPublicUrl(filePath);
 
+      if (!publicUrlData?.publicUrl) {
+        console.error("Failed to retrieve public URL");
+        return res.status(500).json({ success: false, message: "Failed to retrieve image URL" });
+      }
+
       imageUrl = publicUrlData.publicUrl;
+    } else {
+      console.error("No file provided in request");
+      return res.status(400).json({ success: false, message: "No image file provided" });
     }
 
     const food = new foodModel({
@@ -42,15 +48,14 @@ const addFood = async (req, res) => {
       preparation_time: req.body.preparation_time,
       daily_quantity: req.body.daily_quantity,
       cafeteria_id: req.body.cafeteria_id,
-      image: imageUrl
+      image: imageUrl,
     });
 
     await food.save();
     res.json({ success: true, message: "Food Added" });
-
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    console.error("Add Food Error:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
   }
 };
 
