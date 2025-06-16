@@ -1,6 +1,5 @@
 import { log } from "console";
 import foodModel from "../models/foodModel.js";
-import fs from 'fs'
 import { v4 as uuidv4 } from 'uuid';
 import supabase from "../config/supabaseClient.js";
 
@@ -9,8 +8,20 @@ const addFood = async (req, res) => {
     let imageUrl = '';
 
     if (req.file) {
+      // Validate file buffer
+      if (!req.file.buffer || req.file.buffer.length === 0) {
+        console.error("Empty file buffer received");
+        return res.status(400).json({ success: false, message: "Uploaded file is empty" });
+      }
+
       const ext = req.file.originalname.split('.').pop();
       const filePath = `foods/${uuidv4()}.${ext}`;
+
+      console.log("Uploading file to Supabase:", {
+        filePath,
+        mimeType: req.file.mimetype,
+        bufferSize: req.file.buffer.length,
+      });
 
       const { data, error } = await supabase.storage
         .from('foods')
@@ -59,46 +70,56 @@ const addFood = async (req, res) => {
   }
 };
 
-// all food list
 const listFood = async (req, res) => {
   try {
     const foods = await foodModel.find({});
-    res.json({ success: true, data: foods })
+    res.json({ success: true, data: foods });
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: "Error" })
+    console.error("List Food Error:", error);
+    res.json({ success: false, message: "Error fetching food list" });
   }
-}
+};
 
-// remove food item
 const removeFood = async (req, res) => {
   try {
     const food = await foodModel.findById(req.body.id);
-    fs.unlink(`uploads/${food.image}`, () => {})
-    await foodModel.findByIdAndDelete(req.body.id);
-    res.json({ success: true, message: "Food Removed" })
-  } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: "Error" })
-  }
-}
+    if (!food) {
+      return res.status(404).json({ success: false, message: "Food not found" });
+    }
 
-// List food items by cafeteria ID
+    if (food.image) {
+      // Extract file path from Supabase URL
+      const filePath = food.image.split('/').slice(-2).join('/');
+      const { error } = await supabase.storage
+        .from('foods')
+        .remove([filePath]);
+      if (error) {
+        console.error("Supabase Delete Error:", error.message, error);
+      }
+    }
+
+    await foodModel.findByIdAndDelete(req.body.id);
+    res.json({ success: true, message: "Food Removed" });
+  } catch (error) {
+    console.error("Remove Food Error:", error);
+    res.json({ success: false, message: "Error removing food" });
+  }
+};
+
 const listFoodByCafeteriaId = async (req, res) => {
   const cafeteriaId = req.params.cafeteria_id;
   try {
     const foods = await foodModel.find({ cafeteria_id: cafeteriaId });
     res.json({ success: true, data: foods });
   } catch (error) {
-    console.log(error);
+    console.error("List Food by Cafeteria Error:", error);
     res.json({ success: false, message: "Error fetching food by cafeteria ID" });
   }
 };
 
-// Update food item
 const updateFood = async (req, res) => {
   try {
-    console.log("Datos recibidos en updateFood:", req.body, req.file); // Para depuración
+    console.log("Datos recibidos en updateFood:", req.body, req.file);
     const { id } = req.body;
     let updateData = {
       name: req.body.name,
@@ -108,22 +129,54 @@ const updateFood = async (req, res) => {
       ingredients: req.body.ingredients ? JSON.parse(req.body.ingredients) : [],
       is_available: req.body.is_available,
       preparation_time: req.body.preparation_time,
-      daily_quantity: req.body.daily_quantity
+      daily_quantity: req.body.daily_quantity,
     };
 
     if (req.file) {
-      const food = await foodModel.findById(id);
-      if (food.image) {
-        fs.unlink(`uploads/${food.image}`, () => {});
+      // Validate file buffer
+      if (!req.file.buffer || req.file.buffer.length === 0) {
+        console.error("Empty file buffer received");
+        return res.status(400).json({ success: false, message: "Uploaded file is empty" });
       }
-      updateData.image = req.file.filename;
+
+      const food = await foodModel.findById(id);
+      if (food?.image) {
+        // Delete old image from Supabase
+        const oldFilePath = food.image.split('/').slice(-2).join('/');
+        const { error } = await supabase.storage
+          .from('foods')
+          .remove([oldFilePath]);
+        if (error) {
+          console.error("Supabase Delete Error:", error.message, error);
+        }
+      }
+
+      // Upload new image
+      const ext = req.file.originalname.split('.').pop();
+      const filePath = `foods/${uuidv4()}.${ext}`;
+      const { data, error } = await supabase.storage
+        .from('foods')
+        .upload(filePath, req.file.buffer, {
+          contentType: req.file.mimetype,
+        });
+
+      if (error) {
+        console.error("Supabase Upload Error:", error.message, error);
+        return res.status(500).json({ success: false, message: "Error uploading new image" });
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from('foods')
+        .getPublicUrl(filePath);
+      if (!publicUrlData?.publicUrl) {
+        console.error("Failed to retrieve public URL");
+        return res.status(500).json({ success: false, message: "Failed to retrieve image URL" });
+      }
+
+      updateData.image = publicUrlData.publicUrl;
     }
 
-    const updatedFood = await foodModel.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true }
-    );
+    const updatedFood = await foodModel.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!updatedFood) {
       return res.json({ success: false, message: "Comida no encontrada" });
@@ -131,7 +184,7 @@ const updateFood = async (req, res) => {
 
     res.json({ success: true, message: "Comida actualizada", data: updatedFood });
   } catch (error) {
-    console.log(error);
+    console.error("Update Food Error:", error);
     res.json({ success: false, message: "Error al actualizar la comida" });
   }
 };
