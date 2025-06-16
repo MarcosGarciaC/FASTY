@@ -1,30 +1,57 @@
 import { log } from "console";
 import foodModel from "../models/foodModel.js";
 import fs from 'fs'
+import { v4 as uuidv4 } from 'uuid';
 
-// add food item
-const addFood = async (req, res) => {  
-  let image_filename = `${req.file.filename}`;
-  const food = new foodModel({
-    name: req.body.name,
-    description: req.body.description,
-    price: req.body.price,
-    category: req.body.category,
-    ingredients: req.body.ingredients,
-    is_available: req.body.is_available,
-    preparation_time: req.body.preparation_time,
-    daily_quantity: req.body.daily_quantity,
-    cafeteria_id: req.body.cafeteria_id,
-    image: image_filename
-  })
+// add food item with Supabase upload
+const addFood = async (req, res) => {
   try {
+    let imageUrl = '';
+
+    if (req.file) {
+      const ext = req.file.originalname.split('.').pop();
+      const filePath = `foods/${uuidv4()}.${ext}`;
+
+      const { data, error } = await supabase.storage
+        .from('foods')  // nombre de tu bucket
+        .upload(filePath, req.file.buffer, {
+          contentType: req.file.mimetype,
+        });
+
+      if (error) {
+        console.log("Upload Error:", error);
+        return res.status(500).json({ success: false, message: "Error uploading image" });
+      }
+
+      const { data: publicUrlData } = supabase
+        .storage
+        .from('foods')
+        .getPublicUrl(filePath);
+
+      imageUrl = publicUrlData.publicUrl;
+    }
+
+    const food = new foodModel({
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      category: req.body.category,
+      ingredients: req.body.ingredients,
+      is_available: req.body.is_available,
+      preparation_time: req.body.preparation_time,
+      daily_quantity: req.body.daily_quantity,
+      cafeteria_id: req.body.cafeteria_id,
+      image: imageUrl
+    });
+
     await food.save();
-    res.json({ success: true, message: "Food Added" })
+    res.json({ success: true, message: "Food Added" });
+
   } catch (error) {
-    console.log(error)
-    res.json({ success: false, message: "Error" })
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
-}
+};
 
 // all food list
 const listFood = async (req, res) => {
