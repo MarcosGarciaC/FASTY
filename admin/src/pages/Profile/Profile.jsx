@@ -37,7 +37,7 @@ const Profile = () => {
             name: c.name || '',
             description: c.description || '',
             location: c.location || '',
-            logo: c.logo ? `${API_URL}/images/cafetins/${c.logo}` : '',
+            logo: c.logo,
             schedule: c.opening_hours || '',
             phone: c.contact_phone || '',
             status: c.status || 'active',
@@ -145,10 +145,7 @@ const Profile = () => {
             <label>Location</label>
             <input type="text" name="location" value={cafeData.location} onChange={handleChange} disabled={!isEditing} />
           </div>
-          <div className="form-group">
-            <label>Schedule</label>
-            <input type="text" name="schedule" value={cafeData.schedule} onChange={handleChange} disabled={!isEditing} />
-          </div>
+          
           <div className="form-group">
             <label>Phone</label>
             <input type="text" name="phone" value={cafeData.phone} onChange={handleChange} disabled={!isEditing} />
