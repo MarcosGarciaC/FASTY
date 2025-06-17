@@ -10,12 +10,7 @@ const Profile = () => {
   const cafeteriaId = localStorage.getItem("user_id");
   const [cafetinId, setCafetinId] = useState(null);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const [passwordData, setPasswordData] = useState({
-    email: auth.user?.email || '',
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  });
+  const [formError, setFormError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
 
@@ -29,6 +24,13 @@ const Profile = () => {
     status: 'active',
     prepTime: 15,
     maxOrders: 20,
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    email: auth.user?.email || '',
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -77,8 +79,36 @@ const Profile = () => {
     setCafeData((prev) => ({ ...prev, logo: file ? URL.createObjectURL(file) : '' }));
   };
 
+  const validatePassword = (password) => {
+    const minLength = password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return {
+      isValid: minLength && hasUppercase && hasLowercase && hasNumber && hasSpecialChar,
+      errors: [
+        !minLength && 'La contraseña debe tener al menos 8 caracteres.',
+        !hasUppercase && 'La contraseña debe incluir al menos una letra mayúscula.',
+        !hasLowercase && 'La contraseña debe incluir al menos una letra minúscula.',
+        !hasNumber && 'La contraseña debe incluir al menos un número.',
+        !hasSpecialChar && 'La contraseña debe incluir al menos un carácter especial.'
+      ].filter(Boolean)
+    };
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
+
+    // Validación de campos vacíos
+    const requiredFields = ['name', 'description', 'location', 'schedule', 'phone', 'status', 'prepTime', 'maxOrders'];
+    const emptyField = requiredFields.find(field => cafeData[field] === '' || cafeData[field] === null);
+    if (emptyField) {
+      setFormError(`Por favor completa el campo "${emptyField}".`);
+      return;
+    }
 
     try {
       const formData = new FormData();
@@ -104,9 +134,10 @@ const Profile = () => {
         console.log('Cafetin updated:', result.data);
         setIsEditing(false);
       } else {
-        console.error('Update failed:', result.message);
+        setFormError(result.message || 'Error al actualizar el perfil.');
       }
     } catch (error) {
+      setFormError('Error al actualizar el perfil.');
       console.error('Error updating cafetin:', error);
     }
   };
@@ -116,8 +147,20 @@ const Profile = () => {
     setPasswordError('');
     setPasswordSuccess('');
 
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setPasswordError('New passwords do not match');
+    const { email, currentPassword, newPassword, confirmPassword } = passwordData;
+    if (!email || !currentPassword || !newPassword || !confirmPassword) {
+      setPasswordError('Por favor completa todos los campos de contraseña.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Las nuevas contraseñas no coinciden.');
+      return;
+    }
+
+    const validation = validatePassword(newPassword);
+    if (!validation.isValid) {
+      setPasswordError(validation.errors.join(' '));
       return;
     }
 
@@ -128,16 +171,12 @@ const Profile = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${auth.token}`
         },
-        body: JSON.stringify({
-          email: passwordData.email,
-          currentPassword: passwordData.currentPassword,
-          newPassword: passwordData.newPassword
-        })
+        body: JSON.stringify({ email, currentPassword, newPassword })
       });
 
       const result = await res.json();
       if (result.success) {
-        setPasswordSuccess('Password updated successfully');
+        setPasswordSuccess('¡Contraseña actualizada con éxito!');
         setPasswordData({
           email: auth.user?.email || '',
           currentPassword: '',
@@ -146,10 +185,10 @@ const Profile = () => {
         });
         setIsEditingPassword(false);
       } else {
-        setPasswordError(result.message);
+        setPasswordError(result.message || 'Error al actualizar la contraseña.');
       }
     } catch (error) {
-      setPasswordError('Error updating password');
+      setPasswordError('Error al actualizar la contraseña.');
       console.error('Error updating password:', error);
     }
   };
@@ -157,11 +196,14 @@ const Profile = () => {
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <h2>Café Profile</h2>
+        <h2>Perfil del Café</h2>
         {!isEditing ? (
-          <button className="edit-button" onClick={() => setIsEditing(true)}>Edit Profile</button>
+          <button className="edit-button" onClick={() => setIsEditing(true)}>Editar Perfil</button>
         ) : (
-          <button className="cancel-button" onClick={() => setIsEditing(false)}>Cancel</button>
+          <button className="cancel-button" onClick={() => {
+            setIsEditing(false);
+            setFormError('');
+          }}>Cancelar</button>
         )}
       </div>
 
@@ -170,13 +212,13 @@ const Profile = () => {
           <div className="profile-photo">
             <img 
               src={cafeData.logo || 'https://via.placeholder.com/150'} 
-              alt="Profile" 
+              alt="Perfil" 
               className={cafeData.logo ? '' : 'placeholder'}
             />
             {isEditing && (
               <div className="photo-upload">
                 <label className="upload-button">
-                  Change Photo
+                  Cambiar Foto
                   <input 
                     type="file" 
                     accept="image/*" 
@@ -191,51 +233,52 @@ const Profile = () => {
 
         <div className="form-grid">
           <div className="form-group">
-            <label>Café Name</label>
+            <label>Nombre del Café</label>
             <input type="text" name="name" value={cafeData.name} onChange={handleChange} disabled={!isEditing} />
           </div>
           <div className="form-group">
-            <label>Description</label>
+            <label>Descripción</label>
             <input type="text" name="description" value={cafeData.description} onChange={handleChange} disabled={!isEditing} />
           </div>
           <div className="form-group">
-            <label>Location</label>
+            <label>Ubicación</label>
             <input type="text" name="location" value={cafeData.location} onChange={handleChange} disabled={!isEditing} />
           </div>
-          
           <div className="form-group">
-            <label>Phone</label>
+            <label>Teléfono</label>
             <input type="text" name="phone" value={cafeData.phone} onChange={handleChange} disabled={!isEditing} />
           </div>
           <div className="form-group">
-            <label>Status</label>
+            <label>Estado</label>
             <select name="status" value={cafeData.status} onChange={handleChange} disabled={!isEditing}>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="active">Activo</option>
+              <option value="inactive">Inactivo</option>
             </select>
           </div>
           <div className="form-group">
-            <label>Prep Time (minutes)</label>
+            <label>Tiempo de Preparación (minutos)</label>
             <input type="number" name="prepTime" value={cafeData.prepTime} onChange={handleChange} disabled={!isEditing} />
           </div>
           <div className="form-group">
-            <label>Max Orders</label>
+            <label>Pedidos Máximos</label>
             <input type="number" name="maxOrders" value={cafeData.maxOrders} onChange={handleChange} disabled={!isEditing} />
           </div>
         </div>
 
+        {formError && <p className="error-message">{formError}</p>}
+
         {isEditing && (
           <div className="form-actions">
-            <button type="submit" className="save-button">Save Changes</button>
+            <button type="submit" className="save-button">Guardar Cambios</button>
           </div>
         )}
       </form>
 
       <div className="password-section">
         <div className="profile-header">
-          <h2>Update Password</h2>
+          <h2>Actualizar Contraseña</h2>
           {!isEditingPassword ? (
-            <button className="edit-button" onClick={() => setIsEditingPassword(true)}>Change Password</button>
+            <button className="edit-button" onClick={() => setIsEditingPassword(true)}>Cambiar Contraseña</button>
           ) : (
             <button className="cancel-button" onClick={() => {
               setIsEditingPassword(false);
@@ -247,7 +290,7 @@ const Profile = () => {
               });
               setPasswordError('');
               setPasswordSuccess('');
-            }}>Cancel</button>
+            }}>Cancelar</button>
           )}
         </div>
 
@@ -255,7 +298,7 @@ const Profile = () => {
           <form onSubmit={handlePasswordSubmit}>
             <div className="form-grid">
               <div className="form-group">
-                <label>Email</label>
+                <label>Correo Electrónico</label>
                 <input
                   type="email"
                   name="email"
@@ -265,7 +308,7 @@ const Profile = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Current Password</label>
+                <label>Contraseña Actual</label>
                 <input
                   type="password"
                   name="currentPassword"
@@ -275,7 +318,7 @@ const Profile = () => {
                 />
               </div>
               <div className="form-group">
-                <label>New Password</label>
+                <label>Nueva Contraseña</label>
                 <input
                   type="password"
                   name="newPassword"
@@ -285,7 +328,7 @@ const Profile = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Confirm New Password</label>
+                <label>Confirmar Nueva Contraseña</label>
                 <input
                   type="password"
                   name="confirmPassword"
@@ -295,10 +338,18 @@ const Profile = () => {
                 />
               </div>
             </div>
-            {passwordError && <p className="error-message">{passwordError}</p>}
-            {passwordSuccess && <p className="success-message">{passwordSuccess}</p>}
+            {passwordError && (
+              <div className="password-error-message">
+                <p>{passwordError}</p>
+              </div>
+            )}
+            {passwordSuccess && (
+              <div className="password-success-message">
+                <p>{passwordSuccess}</p>
+              </div>
+            )}
             <div className="form-actions">
-              <button type="submit" className="save-button">Update Password</button>
+              <button type="submit" className="save-button">Actualizar Contraseña</button>
             </div>
           </form>
         )}
