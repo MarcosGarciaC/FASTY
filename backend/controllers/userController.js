@@ -85,4 +85,40 @@ const registerUser = async (req, res) => {
   }
 }
 
-export { loginUser, registerUser }
+// update password
+const updatePassword = async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body;
+
+  try {
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isMatch) {
+      return res.json({ success: false, message: "Current password is incorrect" });
+    }
+
+    if (newPassword.length < 8) {
+      return res.json({ success: false, message: "New password must be at least 8 characters" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ success: true, message: "Password updated successfully" });
+
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error updating password" });
+  }
+};
+
+
+export { loginUser, registerUser, updatePassword }

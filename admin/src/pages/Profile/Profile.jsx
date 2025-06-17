@@ -10,6 +10,14 @@ const Profile = () => {
   const cafeteriaId = localStorage.getItem("user_id");
   const [cafetinId, setCafetinId] = useState(null);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [passwordData, setPasswordData] = useState({
+    email: auth.user?.email || '',
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
 
   const [cafeData, setCafeData] = useState({
     name: '',
@@ -24,6 +32,7 @@ const Profile = () => {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
 
   useEffect(() => {
     const fetchCafetin = async () => {
@@ -55,6 +64,11 @@ const Profile = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCafeData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e) => {
@@ -94,6 +108,49 @@ const Profile = () => {
       }
     } catch (error) {
       console.error('Error updating cafetin:', error);
+    }
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    setPasswordError('');
+    setPasswordSuccess('');
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError('New passwords do not match');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/api/users/update-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.token}`
+        },
+        body: JSON.stringify({
+          email: passwordData.email,
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        })
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        setPasswordSuccess('Password updated successfully');
+        setPasswordData({
+          email: auth.user?.email || '',
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+        setIsEditingPassword(false);
+      } else {
+        setPasswordError(result.message);
+      }
+    } catch (error) {
+      setPasswordError('Error updating password');
+      console.error('Error updating password:', error);
     }
   };
 
@@ -173,6 +230,79 @@ const Profile = () => {
           </div>
         )}
       </form>
+
+      <div className="password-section">
+        <div className="profile-header">
+          <h2>Update Password</h2>
+          {!isEditingPassword ? (
+            <button className="edit-button" onClick={() => setIsEditingPassword(true)}>Change Password</button>
+          ) : (
+            <button className="cancel-button" onClick={() => {
+              setIsEditingPassword(false);
+              setPasswordData({
+                email: auth.user?.email || '',
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+              });
+              setPasswordError('');
+              setPasswordSuccess('');
+            }}>Cancel</button>
+          )}
+        </div>
+
+        {isEditingPassword && (
+          <form onSubmit={handlePasswordSubmit}>
+            <div className="form-grid">
+              <div className="form-group">
+                <label>Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={passwordData.email}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Current Password</label>
+                <input
+                  type="password"
+                  name="currentPassword"
+                  value={passwordData.currentPassword}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>New Password</label>
+                <input
+                  type="password"
+                  name="newPassword"
+                  value={passwordData.newPassword}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Confirm New Password</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={passwordData.confirmPassword}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </div>
+            </div>
+            {passwordError && <p className="error-message">{passwordError}</p>}
+            {passwordSuccess && <p className="success-message">{passwordSuccess}</p>}
+            <div className="form-actions">
+              <button type="submit" className="save-button">Update Password</button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 };
