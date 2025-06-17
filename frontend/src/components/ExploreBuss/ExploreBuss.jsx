@@ -3,7 +3,7 @@ import './ExploreBuss.css';
 import { StoreContext } from '../../context/StoreContext';
 
 const ExploreBuss = ({ cafeteriaId, setCafeteriaId }) => {
-  const { cafetinList, url, orderItems, clearCart } = useContext(StoreContext);
+  const { cafetinList, orderItems, clearCart } = useContext(StoreContext);
 
   // Filtrar la lista de cafeterías según el cafeteriaId
   const filteredCafetinList = cafeteriaId === "All"
@@ -77,7 +77,7 @@ const ExploreBuss = ({ cafeteriaId, setCafeteriaId }) => {
             >
               <img
                 className={cafeteriaId === item._id ? "active" : ""}
-                src={`${url}/images/cafetins/${item.logo}`}
+                src={item.logo}
                 alt={item.name}
               />
               <p>{item.name}</p>
@@ -91,7 +91,7 @@ const ExploreBuss = ({ cafeteriaId, setCafeteriaId }) => {
               <i className="fa-solid fa-map-marker-alt"></i> {selectedCafeteria.location || "No hay ubicación disponible."}
             </p>
             <p className="explore-buss__location">
-            <i class="fa-solid fa-phone"></i> {selectedCafeteria.contact_phone || "No hay ubicación disponible."}
+              <i className="fa-solid fa-phone"></i> {selectedCafeteria.contact_phone || "No hay número de contacto disponible."}
             </p>
             <div className="explore-buss__hours">
               <div className="hours-list">
