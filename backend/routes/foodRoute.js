@@ -1,19 +1,16 @@
-import express from "express";
-import { addCafetin, listCafetin, removeCafetin, updateCafetin, getCafetinByOwner } from "../controllers/cafetinController.js";
+import express from 'express';
+import { addFood, listFood, removeFood, listFoodByCafeteriaId, updateFood } from '../controllers/foodController.js';
 import multer from 'multer';
 
 // Use memory storage instead of disk storage
 const upload = multer({ storage: multer.memoryStorage() });
 
-const cafetinRouter = express.Router();
+const foodRouter = express.Router();
 
-// Solo para el archivo 'logo'
-const logoUpload = upload.single('logo');
+foodRouter.post("/add", upload.single("image"), addFood);
+foodRouter.get("/list", listFood);
+foodRouter.post("/remove", removeFood);
+foodRouter.get("/list/by-cafeteria/:cafeteria_id", listFoodByCafeteriaId);
+foodRouter.put("/update", upload.single("image"), updateFood);
 
-cafetinRouter.post("/add", logoUpload, addCafetin); // Solo se sube 'logo'
-cafetinRouter.get("/list", listCafetin);
-cafetinRouter.post("/remove", removeCafetin);
-cafetinRouter.put("/update/:id", upload.single("logo"), updateCafetin);
-cafetinRouter.get("/by-owner/:owner_id", getCafetinByOwner);
-
-export default cafetinRouter;
+export default foodRouter;
