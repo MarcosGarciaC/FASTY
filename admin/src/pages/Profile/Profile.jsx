@@ -122,7 +122,7 @@ const Profile = () => {
     }
 
     try {
-      const res = await fetch(`${API_URL}/api/users/update`, {
+      const res = await fetch(`${API_URL}/api/user/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
