@@ -8,6 +8,7 @@ import Footer from './components/Footer/Footer'
 import LoginPopUp from './components/LoginPopUp/LoginPopUp'
 import Order from './pages/Order/Order'
 import OrderConfirmation from './pages/OrderConfirmation/OrderConfirmation'
+import VerifyEmail from './components/VerifyEmail/VerifyEmail'
 
 const App = () => {
   
@@ -32,6 +33,7 @@ const App = () => {
           <Route path='/order' element={<PlaceOrder/>} />
           <Route path='/orders' element={<Order/>}/>
           <Route path='/order-confirmation' element={<OrderConfirmation/>}/>
+          <Route path="/verify-email" element={<VerifyEmail />} />
         </Routes>
       </div>
       <Footer />

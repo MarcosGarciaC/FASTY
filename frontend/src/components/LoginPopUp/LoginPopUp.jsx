@@ -24,7 +24,7 @@ const LoginPopUp = ({ setShowLogin }) => {
     setData(prevData => ({ ...prevData, [name]: value }));
 
     if (name === "email") {
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@std\.uni\.edu\.ni$/;
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|std\.uni\.edu\.ni)$/;
       setEmailError(!emailRegex.test(value));
     }
 
@@ -64,13 +64,23 @@ const LoginPopUp = ({ setShowLogin }) => {
       ...(currState === "Sign Up" && { full_name: data.full_name, phone: data.phone })
     });
     if (response.data.success) {
-      setToken(response.data.token);
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user_id", response.data.user._id);
-      setShowLogin(false);
+      if (response.data.token) {
+        // Caso: Login exitoso o cuenta verificada
+        setToken(response.data.token);
+        localStorage.setItem("token", response.data.token);
+        if (response.data.user && response.data.user._id) {
+          localStorage.setItem("user_id", response.data.user._id);
+        }
+        setShowLogin(false);
+      } else {
+        // Caso: Registro exitoso, pero cuenta pendiente de verificación
+        alert("✅ Registro exitoso. Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.");
+        setCurrState("Login");
+      }
     } else {
       alert(response.data.message);
     }
+
   };
 
   return (
