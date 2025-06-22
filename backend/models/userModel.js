@@ -10,7 +10,12 @@ const userSchema = new Schema({
 
   phone: { type: String, default: '' },
   profile_image: { type: String, default: '' }, // URL de imagen
-
+  status: {
+    type: String,
+    enum: ['pending', 'active'],
+    default: 'pending'
+  },
+  verificationToken: { type: String },
   role: {
     type: String,
     enum: ['customer', 'cafeteria_owner', 'admin'],
