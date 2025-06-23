@@ -83,6 +83,20 @@ const LoginPopUp = ({ setShowLogin }) => {
 
   };
 
+
+  useEffect(() => {
+  setData({
+    email: "",
+    password: "",
+    full_name: "",
+    phone: ""
+  });
+  setShowPhone(false);
+  setShowEmail(false);
+  setShowPassword(false);
+  setEmailError(false);
+}, [currState]);
+
   return (
     <div className='login-popup'>
       <form onSubmit={onLogin} className="login-popup-container">
