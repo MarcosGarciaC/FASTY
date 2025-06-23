@@ -94,18 +94,18 @@ const List = ({ url }) => {
 
   return (
     <div className="list-container">
-      <h1>Menu Items</h1>
+      <h1>Menú Items</h1>
       <div className="food-grid">
         {list.map(food => (
           <div key={food._id} className="food-card">
             {editingId === food._id ? (
               <div className="edit-form">
                 <div className="form-header">
-                  <h3>Edit: {food.name}</h3>
+                  <h3>Editar: {food.name}</h3>
                 </div>
                 <div className="form-body">
                   <div className="form-group">
-                    <label>Image</label>
+                    <label>Imagen</label>
                     {food.image ? (
                       <img src={food.image} alt={food.name} className="edit-image-preview" />
                     ) : (
@@ -115,33 +115,33 @@ const List = ({ url }) => {
                   </div>
 
                   <div className="form-group">
-                    <label>Name</label>
+                    <label>Nombre</label>
                     <input value={formData.name} onChange={(e) => handleChange(e, 'name')} />
                   </div>
 
                   <div className="form-group">
-                    <label>Category</label>
+                    <label>Categoria</label>
                     <input value={formData.category} onChange={(e) => handleChange(e, 'category')} />
                   </div>
 
                   <div className="form-group">
-                    <label>Price</label>
+                    <label>Precio</label>
                     <input type="number" value={formData.price} onChange={(e) => handleChange(e, 'price')} />
                   </div>
 
                   <div className="form-group">
-                    <label>Description</label>
+                    <label>Descripción</label>
                     <textarea value={formData.description} onChange={(e) => handleChange(e, 'description')} />
                   </div>
 
                   <div className="form-group">
-                    <label>Ingredients</label>
+                    <label>Ingredientes</label>
                     <textarea value={formData.ingredients} onChange={(e) => handleChange(e, 'ingredients')} />
                   </div>
 
                   <div className="form-actions">
-                    <button onClick={saveEdit} className="save-btn">Save</button>
-                    <button onClick={cancelEdit} className="cancel-btn">Cancel</button>
+                    <button onClick={saveEdit} className="save-btn">Actualizar</button>
+                    <button onClick={cancelEdit} className="cancel-btn">Cancelar</button>
                   </div>
                 </div>
               </div>
@@ -149,7 +149,7 @@ const List = ({ url }) => {
               <>
                 <div className="card-header">
                   <h3>{food.name}</h3>
-                  <span className="price">${food.price.toFixed(2)}</span>
+                  <span className="price">C${food.price.toFixed(2)}</span>
                 </div>
                 <div className="card-body">
                   {food.image ? (
@@ -158,13 +158,13 @@ const List = ({ url }) => {
                     <p>No image available</p>
                   )}
                   <div className="card-details">
-                    <p><span>Category:</span> {food.category}</p>
-                    <p><span>Description:</span> {food.description}</p>
-                    <p><span>Ingredients:</span> {food.ingredients.join(", ")}</p>
+                    <p><span>Categoria:</span> {food.category}</p>
+                    <p><span>Descripción:</span> {food.description}</p>
+                    <p><span>Ingredientes:</span> {food.ingredients.join(", ")}</p>
                   </div>
                   <div className="card-actions">
-                    <button onClick={() => startEdit(food)} className="edit-btn">Edit</button>
-                    <button onClick={() => removeFood(food._id)} className="delete-btn">Delete</button>
+                    <button onClick={() => startEdit(food)} className="edit-btn">Editar</button>
+                    <button onClick={() => removeFood(food._id)} className="delete-btn">Eliminar</button>
                   </div>
                 </div>
               </>
