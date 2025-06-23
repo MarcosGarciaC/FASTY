@@ -71,18 +71,24 @@ const List = ({ url }) => {
     }
   };
 
-  const removeFood = async (id) => {
-    try {
-      const res = await axios.post(`${url}/api/food/remove`, { id });
-      if (res.data.success) {
-        toast.success(res.data.message);
-        fetchList();
-      } else toast.error("Error deleting food");
-    } catch (e) {
-      console.error("Remove food error:", e);
+const removeFood = async (id) => {
+  const confirmed = window.confirm("¿Estás seguro que deseas eliminar este producto?");
+  if (!confirmed) return;
+
+  try {
+    const res = await axios.post(`${url}/api/food/remove`, { id });
+    if (res.data.success) {
+      toast.success(res.data.message);
+      fetchList();
+    } else {
       toast.error("Error deleting food");
     }
-  };
+  } catch (e) {
+    console.error("Remove food error:", e);
+    toast.error("Error deleting food");
+  }
+};
+
 
   const handleChange = (e, key) => {
     const { value, type, checked } = e.target;
