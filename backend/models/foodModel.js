@@ -13,7 +13,7 @@ const foodSchema = new Schema({
   price: { type: Number, required: true, min: 0 },
   category: {
     type: String,
-    enum: ['Almuerzo','Bebida', 'Snack'],
+    enum: ['Almuerzo','Bebida', 'Snack', 'Reposteria'],
     required: true
   },
 
