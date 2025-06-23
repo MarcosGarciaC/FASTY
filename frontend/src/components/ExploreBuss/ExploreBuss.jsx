@@ -52,16 +52,10 @@ const ExploreBuss = ({ cafeteriaId, setCafeteriaId }) => {
   };
 
   // Function to get status for the current day
-  const getDayStatus = (day, hours, isCurrentDay) => {
-    if (!hours || !hours.open || !hours.close) {
-      return { status: 'Cerrado', class: 'closed' };
-    }
-    if (isCurrentDay) {
-      return isOpenToday({ [day]: hours })
-        ? { status: 'Abierto', class: 'open' }
-        : { status: 'Cerrado', class: 'closed' };
-    }
-    return { status: 'Cerrado', class: 'closed' }; // Default for non-current days (not used)
+  const getDayStatus = (cafeteriaStatus) => {
+    return cafeteriaStatus === 'active'
+      ? { status: 'Abierto', class: 'open' }
+      : { status: 'Cerrado', class: 'closed' };
   };
 
   return (
@@ -95,21 +89,16 @@ const ExploreBuss = ({ cafeteriaId, setCafeteriaId }) => {
             </p>
             <div className="explore-buss__hours">
               <div className="hours-list">
-                {[''].map((day, index) => {
-                  const isCurrentDay = day.toLowerCase() === '';
-                  const { status, class: statusClass } = getDayStatus(day, selectedCafeteria.opening_hours[day], isCurrentDay);
-                  return (
-                    <div key={index} className={`hours-item ${statusClass}`}>
-                      <span className="hours-day">{day.charAt(0).toUpperCase() + day.slice(1)}</span>
-                      <span className="hours-status">
-                        <span className={`status-dot ${statusClass}`}></span>
-                        {status}
-                      </span>
-                    </div>
-                  );
-                })}
+                <div className={`hours-item ${getDayStatus(selectedCafeteria.status).class}`}>
+                  <span className="hours-day"></span>
+                  <span className="hours-status">
+                    <span className={`status-dot ${getDayStatus(selectedCafeteria.status).class}`}></span>
+                    {getDayStatus(selectedCafeteria.status).status}
+                  </span>
+                </div>
               </div>
             </div>
+
           </div>
         )}
       </div>
