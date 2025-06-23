@@ -118,6 +118,19 @@ textarea {
 .submit-btn:hover {
   background-color: #555;
 }
+/* Add to Add.css */
+.error {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+.form-group.invalid input,
+.form-group.invalid textarea,
+.form-group.invalid select {
+  border-color: #d32f2f;
+}
 
 @media (max-width: 768px) {
   .form-row {

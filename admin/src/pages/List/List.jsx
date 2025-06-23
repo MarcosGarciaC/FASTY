@@ -33,7 +33,11 @@ const List = ({ url }) => {
 
   const startEdit = (food) => {
     setEditingId(food._id);
-    setFormData({ ...food, ingredients: food.ingredients.join(", ") });
+    setFormData({
+      ...food,
+      ingredients: food.ingredients.join(", "),
+      is_available: food.is_available
+    });
     setImageFile(null);
   };
 
@@ -47,7 +51,7 @@ const List = ({ url }) => {
     try {
       const fd = new FormData();
       fd.append("id", formData._id);
-      ["name", "category", "price", "description"].forEach(key => fd.append(key, formData[key]));
+      ["name", "category", "price", "description", "is_available"].forEach(key => fd.append(key, formData[key]));
       fd.append("ingredients", JSON.stringify(formData.ingredients.split(",").map(s => s.trim())));
       if (imageFile) fd.append("image", imageFile);
 
@@ -81,7 +85,11 @@ const List = ({ url }) => {
   };
 
   const handleChange = (e, key) => {
-    setFormData(prev => ({ ...prev, [key]: e.target.value }));
+    const { value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [key]: type === 'checkbox' ? checked : value
+    }));
   };
 
   const handleImage = e => {
@@ -121,22 +129,38 @@ const List = ({ url }) => {
 
                   <div className="form-group">
                     <label>Categoria</label>
-                    <input value={formData.category} onChange={(e) => handleChange(e, 'category')} />
+                    <select value={formData.category} onChange={(e) => handleChange(e, 'category')}>
+                      <option value="Almuerzo">Almuerzo</option>
+                      <option value="Bebida">Bebida</option>
+                      <option value="Ensalada">Ensalada</option>
+                      <option value="Reposteria">Reposteria</option>
+                    </select>
                   </div>
 
                   <div className="form-group">
                     <label>Precio</label>
-                    <input type="number" value={formData.price} onChange={(e) => handleChange(e, 'price')} />
+                    <input type="number" value={formData.price} onChange={(e) => handleChange(e, 'price')} step="0.01" />
                   </div>
 
                   <div className="form-group">
-                    <label>Descripción</label>
+                    <label>Descripción (opcional)</label>
                     <textarea value={formData.description} onChange={(e) => handleChange(e, 'description')} />
                   </div>
 
                   <div className="form-group">
-                    <label>Ingredientes</label>
+                    <label>Ingredientes (opcional)</label>
                     <textarea value={formData.ingredients} onChange={(e) => handleChange(e, 'ingredients')} />
+                  </div>
+
+                  <div className="form-group checkbox-group">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={formData.is_available}
+                        onChange={(e) => handleChange(e, 'is_available')}
+                      />
+                      Disponible
+                    </label>
                   </div>
 
                   <div className="form-actions">
@@ -159,10 +183,11 @@ const List = ({ url }) => {
                   )}
                   <div className="card-details">
                     <p><span>Categoria:</span> {food.category}</p>
-                    <p><span>Descripción:</span> {food.description}</p>
-                    <p><span>Ingredientes:</span> {food.ingredients.join(", ")}</p>
+                    <p><span>Descripción:</span> {food.description || 'N/A'}</p>
+                    <p><span>Ingredientes:</span> {food.ingredients.length > 0 ? food.ingredients.join(", ") : 'N/A'}</p>
+                    <p><span>Disponible:</span> {food.is_available ? 'Sí' : 'No'}</p>
                   </div>
-                  <div className="card-actions">
+                  <div className="form-actions">
                     <button onClick={() => startEdit(food)} className="edit-btn">Editar</button>
                     <button onClick={() => removeFood(food._id)} className="delete-btn">Eliminar</button>
                   </div>

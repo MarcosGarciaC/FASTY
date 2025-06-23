@@ -130,29 +130,29 @@ const Orders = () => {
   return (
     <div className="orders-container">
       <header className="orders-header">
-        <h1>Orders</h1>
+        <h1>Ordenes</h1>
         <div className="refresh-info">Auto-refreshing every 5 seconds</div>
       </header>
 
       <section className="orders-section">
-        <h2>Pending ({pendingOrders.length})</h2>
+        <h2>Pendientes ({pendingOrders.length})</h2>
         {pendingOrders.length > 0 ? (
           <div className="orders-list">
             {pendingOrders.map(renderOrder)}
           </div>
         ) : (
-          <div className="empty-state">No pending orders</div>
+          <div className="empty-state">No hay ordenes pendientes</div>
         )}
       </section>
 
       <section className="orders-section">
-        <h2>Completed ({completedOrders.length})</h2>
+        <h2>Completados ({completedOrders.length})</h2>
         {completedOrders.length > 0 ? (
           <div className="orders-list">
             {completedOrders.map(renderOrder)}
           </div>
         ) : (
-          <div className="empty-state">No completed orders</div>
+          <div className="empty-state">No hay ordenes completas</div>
         )}
       </section>
     </div>
