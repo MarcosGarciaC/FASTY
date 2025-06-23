@@ -95,10 +95,10 @@ const Add = ({ url }) => {
   return (
     <div className="add-form-container">
       <form className="food-form" onSubmit={onSubmitHandler}>
-        <h2>Add New Food Item</h2>
+        <h2>Agrega una nueva comida</h2>
         
         <div className="form-group image-upload">
-          <label>Upload Image</label>
+          <label>Sube tu imagen</label>
           <div className="image-preview">
             <label htmlFor="image">
               {image ? (
@@ -121,7 +121,7 @@ const Add = ({ url }) => {
         </div>
 
         <div className="form-group">
-          <label>Product Name</label>
+          <label>Nombre del producto</label>
           <input 
             onChange={onChangeHandler} 
             value={data.name} 
@@ -132,7 +132,7 @@ const Add = ({ url }) => {
         </div>
 
         <div className="form-group">
-          <label>Description</label>
+          <label>Descripción</label>
           <textarea
             onChange={onChangeHandler}
             value={data.description}
@@ -144,15 +144,16 @@ const Add = ({ url }) => {
 
         <div className="form-row">
           <div className="form-group">
-            <label>Category</label>
+            <label>Categoria</label>
             <select onChange={onChangeHandler} value={data.category} name="category">
-              <option value="Almuerzo">Lunch</option>
-              <option value="Bebida">Drinks</option>
-              <option value="Snack">Salad</option>
+              <option value="Almuerzo">Almuerzo</option>
+              <option value="Bebida">Bebida</option>
+              <option value="Snack">Ensalada</option>
+              <option value="Reposteria">Reposteria</option>
             </select>
           </div>
           <div className="form-group">
-            <label>Price</label>
+            <label>Precio</label>
             <input 
               onChange={onChangeHandler} 
               value={data.price} 
@@ -164,7 +165,7 @@ const Add = ({ url }) => {
         </div>
 
         <div className="form-group">
-          <label>Ingredients</label>
+          <label>Ingredientes</label>
           <textarea
             onChange={onChangeHandler}
             value={data.ingredients}
@@ -176,7 +177,7 @@ const Add = ({ url }) => {
 
         <div className="form-row">
           <div className="form-group">
-            <label>Prep Time (min)</label>
+            <label>Tiempo de preparación (min)</label>
             <input
               onChange={onChangeHandler}
               value={data.preparation_time}
@@ -186,7 +187,7 @@ const Add = ({ url }) => {
             />
           </div>
           <div className="form-group">
-            <label>Daily Quantity</label>
+            <label>Cantidad Diaria</label>
             <input
               onChange={onChangeHandler}
               value={data.daily_quantity}
@@ -205,7 +206,7 @@ const Add = ({ url }) => {
               checked={data.is_available}
               onChange={onChangeHandler}
             />
-            Available
+            Disponible
           </label>
         </div>
 
@@ -215,7 +216,7 @@ const Add = ({ url }) => {
           name="cafeteria_id"
         />
 
-        <button type="submit" className="submit-btn">Add Item</button>
+        <button type="submit" className="submit-btn">Agregar Item</button>
       </form>
     </div>
   );
