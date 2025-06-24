@@ -18,6 +18,20 @@ const sendOrderConfirmationEmail = async (order, cafeteriaId) => {
   }
   const cafeteriaEmail = owner.email;
 
+  // Obtener los detalles de los ítems con populate
+  const populatedOrder = await orderModel.findById(order._id)
+    .populate('items.food_id', 'name price');
+
+  // Formatear los ítems para el correo
+  const itemsHtml = populatedOrder.items.map(item => `
+    <li>
+      <strong>Ítem:</strong> ${item.food_id.name}<br>
+      <strong>Cantidad:</strong> ${item.quantity}<br>
+      <strong>Precio unitario:</strong> $${item.price.toFixed(2)}<br>
+      <strong>Instrucciones especiales:</strong> ${item.special_instructions || 'Ninguna'}
+    </li>
+  `).join('');
+
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -39,6 +53,10 @@ const sendOrderConfirmationEmail = async (order, cafeteriaId) => {
         <li><strong>Total:</strong> $${order.total_amount.toFixed(2)}</li>
         <li><strong>Hora de recogida:</strong> ${new Date(order.pickup_time).toLocaleString()}</li>
         <li><strong>Método de pago:</strong> ${order.payment_method}</li>
+      </ul>
+      <p>Ítems de la orden:</p>
+      <ul>
+        ${itemsHtml}
       </ul>
       <p>Por favor, prepara el pedido para la hora indicada.</p>
     `
