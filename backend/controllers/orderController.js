@@ -1,4 +1,73 @@
 import orderModel from "../models/orderModel.js";
+import cafeteriaModel from "../models/cafetinModel.js"; // Importar el modelo de cafeteria
+import userModel from "../models/userModel.js"; // Importar el modelo de usuario
+import nodemailer from 'nodemailer';
+
+// Configuración para enviar correo de confirmación de orden
+const sendOrderConfirmationEmail = async (order, userEmail, cafeteriaId) => {
+  // Obtener la cafetería
+  const cafeteria = await cafeteriaModel.findById(cafeteriaId);
+  if (!cafeteria) {
+    throw new Error('Cafeteria not found');
+  }
+
+  // Obtener el email del propietario de la cafetería
+  const owner = await userModel.findById(cafeteria.owner_id);
+  if (!owner || !owner.email) {
+    throw new Error('Cafeteria owner email not found');
+  }
+  const cafeteriaEmail = owner.email;
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  // Correo para el usuario
+  const userMailOptions = {
+    from: '"FASTY" <no-reply@fasty.com>',
+    to: userEmail,
+    subject: 'Confirmación de tu orden',
+    html: `
+      <p>¡Gracias por tu pedido!</p>
+      <p>Detalles de la orden:</p>
+      <ul>
+        <li><strong>Código de confirmación:</strong> ${order.confirmation_code}</li>
+        <li><strong>Total:</strong> $${order.total_amount.toFixed(2)}</li>
+        <li><strong>Hora de recogida:</strong> ${new Date(order.pickup_time).toLocaleString()}</li>
+        <li><strong>Método de pago:</strong> ${order.payment_method}</li>
+      </ul>
+      <p>Tu pedido está en proceso. Puedes verificar el estado en nuestro sitio web.</p>
+    `
+  };
+
+  // Correo para la cafetería
+  const cafeteriaMailOptions = {
+    from: '"FASTY" <no-reply@fasty.com>',
+    to: cafeteriaEmail,
+    subject: 'Nueva orden recibida',
+    html: `
+      <p>Se ha recibido una nueva orden para ${cafeteria.name}:</p>
+      <p>Detalles de la orden:</p>
+      <ul>
+        <li><strong>Código de confirmación:</strong> ${order.confirmation_code}</li>
+        <li><strong>Total:</strong> $${order.total_amount.toFixed(2)}</li>
+        <li><strong>Hora de recogida:</strong> ${new Date(order.pickup_time).toLocaleString()}</li>
+        <li><strong>Método de pago:</strong> ${order.payment_method}</li>
+      </ul>
+      <p>Por favor, prepara el pedido para la hora indicada.</p>
+    `
+  };
+
+  // Enviar ambos correos
+  await Promise.all([
+    transporter.sendMail(userMailOptions),
+    transporter.sendMail(cafeteriaMailOptions)
+  ]);
+};
 
 // Crear una nueva orden
 const createOrder = async (req, res) => {
@@ -16,6 +85,10 @@ const createOrder = async (req, res) => {
     });
 
     await order.save();
+
+    // Enviar correo de confirmación al usuario y a la cafetería
+    await sendOrderConfirmationEmail(order, req.body.user_email, req.body.cafeteria_id);
+
     res.json({ success: true, message: "Order created successfully", data: order });
   } catch (error) {
     console.log(error);
