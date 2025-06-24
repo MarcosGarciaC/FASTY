@@ -13,12 +13,10 @@ const PlaceOrder = () => {
   const [feedback] = useState(localStorage.getItem('orderFeedback') || '');
   const [pickupTime] = useState(localStorage.getItem('pickupTime') || '');
 
-  
   // Estado para los datos del formulario
-const [formData] = useState({
-  paymentMethod: 'cash'
-})
-
+  const [formData, setFormData] = useState({
+    paymentMethod: 'cash'
+  })
 
   // Manejar cambios en los inputs
   const handleChange = (e) => {
@@ -52,10 +50,13 @@ const [formData] = useState({
         return
       }
 
-      // Obtener el user_id del token (asumiendo que el token contiene esta información)
-      // Esto depende de cómo esté estructurado tu token JWT
-      // Alternativamente, podrías hacer una petición al backend para obtener el user_id
+      // Obtener el user_id del localStorage
       const user_id = localStorage.getItem('user_id') // Asegúrate de guardar esto al hacer login
+
+      if (!user_id) {
+        alert('Información de usuario incompleta. Por favor, inicie sesión nuevamente.')
+        return
+      }
 
       // Preparar los items para la orden
       const items = orderItems.map(item => {
@@ -111,101 +112,6 @@ const [formData] = useState({
 
   return (
     <form className='place-order' onSubmit={handleSubmit}>
-     {/* <div className="place-order-left">
-        <p className='title'>Order Information</p>
-        <div className="multi-fields">
-          <input 
-            type="text" 
-            placeholder='First Name'
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-          />
-          <input 
-            type="text" 
-            placeholder='Last Name'
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <input 
-          type='email' 
-          placeholder='Email address'
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input 
-          type="text" 
-          placeholder='Street'
-          name="street"
-          value={formData.street}
-          onChange={handleChange}
-          required
-        /> 
-        <div className="multi-fields">
-          <input 
-            type="text" 
-            placeholder='City'
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            required
-          />
-          <input 
-            type="text" 
-            placeholder='State'
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-            required
-          />  
-        </div>
-        <div className="multi-fields">
-          <input 
-            type="text" 
-            placeholder='Zip Code'
-            name="zipCode"
-            value={formData.zipCode}
-            onChange={handleChange}
-            required
-          />
-          <input 
-            type="text" 
-            placeholder='Country'
-            name="country"
-            value={formData.country}
-            onChange={handleChange}
-            required
-          />  
-        </div>
-        <input 
-          type="text" 
-          placeholder='Phone'
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          required
-        />
-        <div className="payment-method">
-          <label>Payment Method:</label>
-          <select 
-            name="paymentMethod"
-            value={formData.paymentMethod}
-            onChange={handleChange}
-            required
-          >
-            <option value="cash">Cash</option>
-            <option value="card">Credit Card</option>
-            <option value="university_card">University Card</option>
-          </select>
-        </div>
-      </div> */}
-      
       <div className="place-order-right">
         <div className="cart-total">
           <h2>Total a pagar</h2>
