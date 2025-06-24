@@ -4,7 +4,7 @@ import userModel from "../models/userModel.js"; // Importar el modelo de usuario
 import nodemailer from 'nodemailer';
 
 // Configuración para enviar correo de confirmación de orden
-const sendOrderConfirmationEmail = async (order, userEmail, cafeteriaId) => {
+const sendOrderConfirmationEmail = async (order, cafeteriaId) => {
   // Obtener la cafetería
   const cafeteria = await cafeteriaModel.findById(cafeteriaId);
   if (!cafeteria) {
@@ -26,24 +26,6 @@ const sendOrderConfirmationEmail = async (order, userEmail, cafeteriaId) => {
     }
   });
 
-  // Correo para el usuario
-  const userMailOptions = {
-    from: '"FASTY" <no-reply@fasty.com>',
-    to: userEmail,
-    subject: 'Confirmación de tu orden',
-    html: `
-      <p>¡Gracias por tu pedido!</p>
-      <p>Detalles de la orden:</p>
-      <ul>
-        <li><strong>Código de confirmación:</strong> ${order.confirmation_code}</li>
-        <li><strong>Total:</strong> $${order.total_amount.toFixed(2)}</li>
-        <li><strong>Hora de recogida:</strong> ${new Date(order.pickup_time).toLocaleString()}</li>
-        <li><strong>Método de pago:</strong> ${order.payment_method}</li>
-      </ul>
-      <p>Tu pedido está en proceso. Puedes verificar el estado en nuestro sitio web.</p>
-    `
-  };
-
   // Correo para la cafetería
   const cafeteriaMailOptions = {
     from: '"FASTY" <no-reply@fasty.com>',
@@ -62,11 +44,8 @@ const sendOrderConfirmationEmail = async (order, userEmail, cafeteriaId) => {
     `
   };
 
-  // Enviar ambos correos
-  await Promise.all([
-    transporter.sendMail(userMailOptions),
-    transporter.sendMail(cafeteriaMailOptions)
-  ]);
+  // Enviar correo a la cafetería
+  await transporter.sendMail(cafeteriaMailOptions);
 };
 
 // Crear una nueva orden
@@ -86,8 +65,8 @@ const createOrder = async (req, res) => {
 
     await order.save();
 
-    // Enviar correo de confirmación al usuario y a la cafetería
-    await sendOrderConfirmationEmail(order, req.body.user_email, req.body.cafeteria_id);
+    // Enviar correo de confirmación solo a la cafetería
+    await sendOrderConfirmationEmail(order, req.body.cafeteria_id);
 
     res.json({ success: true, message: "Order created successfully", data: order });
   } catch (error) {
