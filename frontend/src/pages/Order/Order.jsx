@@ -87,20 +87,20 @@ const Order = () => {
                     {order.status}
                   </span>
                 </p>
-                <p><strong>Total:</strong> ${order.total_amount.toFixed(2)}</p>
+                <p><strong>Total:</strong> C${order.total_amount.toFixed(2)}</p>
                 <div className="order-items">
                   <h4>Items:</h4>
                   <ul>
                     {order.items.map((item, index) => (
                       <li key={index}>
                         <span>{item.food_id?.name || 'Item desconocido'} (x{item.quantity})</span>
-                        <span>${(item.food_id?.price * item.quantity).toFixed(2)}</span>
+                        <span>C${(item.food_id?.price * item.quantity).toFixed(2)}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
                 {order.feedback && (
-                  <p className="order-feedback"><strong>Feedback:</strong> {order.feedback}</p>
+                  <p className="order-feedback"><strong>Descripción:</strong> {order.feedback}</p>
                 )}
                 <p className="order-confirmation-code">
                   <strong>Código de Confirmación:</strong> {order.confirmation_code}

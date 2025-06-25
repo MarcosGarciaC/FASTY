@@ -56,11 +56,11 @@ useEffect(() => {
       <div className="order-details">
         <p><strong>Cafetería:</strong> {order.cafeteria_id?.name || 'Desconocida'}</p>
         <p><strong>Estado:</strong> <span className={`order-status ${order.status}`}>{order.status}</span></p>
-        <p><strong>Total:</strong> ${order.total_amount.toFixed(2)}</p>
+        <p><strong>Total:</strong> C${order.total_amount.toFixed(2)}</p>
         <p><strong>Hora de Recogida:</strong> {new Date(order.pickup_time).toLocaleString()}</p>
         <p><strong>Tiempo restante:</strong> {timeLeft}</p>
         <p><strong>Método de Pago:</strong> {order.payment_method}</p>
-        {order.feedback && <p><strong>Feedback:</strong> {order.feedback}</p>}
+        {order.feedback && <p><strong>Descripción:</strong> {order.feedback}</p>}
         {order.rating > 0 && <p><strong>Calificación:</strong> {order.rating} / 5</p>}
       </div>
       <div className="confirmation-actions">

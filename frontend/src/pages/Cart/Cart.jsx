@@ -108,9 +108,9 @@ const Cart = () => {
                       <p className='no-image'>No image available</p>
                     )}
                     <p>{item.name}</p>
-                    <p>${item.price.toFixed(2)}</p>
+                    <p>C${item.price.toFixed(2)}</p>
                     <p>{cartItems[item._id]}</p>
-                    <p>${(item.price * cartItems[item._id]).toFixed(2)}</p>
+                    <p>C${(item.price * cartItems[item._id]).toFixed(2)}</p>
                     <p onClick={() => removeFromCart(item._id)} className='cross'>×</p>
                   </div>
                 );
@@ -126,17 +126,17 @@ const Cart = () => {
             <div className="cart-total-details-container">
               <div className="cart-total-details">
                 <p>Subtotal</p>
-                <p>${getTotalCartAmount().toFixed(2)}</p>
+                <p>C${getTotalCartAmount().toFixed(2)}</p>
               </div>
               <hr />
               <div className="cart-total-details">
                 <p>Precio de pre orden</p>
-                <p>${getTotalCartAmount() === 0 ? 0 : deliveryFee.toFixed(2)}</p>
+                <p>C${getTotalCartAmount() === 0 ? 0 : deliveryFee.toFixed(2)}</p>
               </div>
               <hr />
               <div className="cart-total-details">
                 <b>Total</b>
-                <b>${(getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + deliveryFee).toFixed(2)}</b>
+                <b>C${(getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + deliveryFee).toFixed(2)}</b>
               </div>
             </div>
 
