@@ -111,7 +111,7 @@ const Orders = () => {
         </div>
 
         <div className="order-footer">
-          <div className="order-total">Total: ${order.total_amount.toFixed(2)}</div>
+          <div className="order-total">Total: C${order.total_amount.toFixed(2)}</div>
           <div className="order-status">
             <select 
               value={order.status} 
