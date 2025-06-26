@@ -66,68 +66,32 @@ const sendOrderConfirmationEmail = async (order, cafeteriaId) => {
   await transporter.sendMail(cafeteriaMailOptions);
 };
 
+// Crear una nueva orden
 const createOrder = async (req, res) => {
   try {
-    const {
-      user_id,
-      cafeteria_id,
-      items,
-      total_amount,
-      pickup_time,
-      payment_method,
-      confirmation_code,
-      rating,
-      feedback
-    } = req.body;
-
-    // Verificar disponibilidad de cada ítem
-    for (const item of items) {
-      const food = await foodModel.findById(item.food_id);
-
-      if (!food || !food.is_available) {
-        return res.status(400).json({ success: false, message: `El producto con ID ${item.food_id} no está disponible.` });
-      }
-
-      if (food.daily_quantity < item.quantity) {
-        return res.status(400).json({
-          success: false,
-          message: `Cantidad insuficiente para ${food.name}. Disponible: ${food.daily_quantity}, solicitado: ${item.quantity}`
-        });
-      }
-    }
-
-    // Crear la orden
     const order = new orderModel({
-      user_id,
-      cafeteria_id,
-      items,
-      total_amount,
-      pickup_time,
-      payment_method,
-      confirmation_code,
-      rating,
-      feedback
+      user_id: req.body.user_id,
+      cafeteria_id: req.body.cafeteria_id,
+      items: req.body.items,
+      total_amount: req.body.total_amount,
+      pickup_time: req.body.pickup_time,
+      payment_method: req.body.payment_method,
+      confirmation_code: req.body.confirmation_code,
+      rating: req.body.rating,
+      feedback: req.body.feedback
     });
 
     await order.save();
 
-    // Restar la cantidad ordenada a cada producto
-    for (const item of items) {
-      await foodModel.findByIdAndUpdate(item.food_id, {
-        $inc: { daily_quantity: -item.quantity }
-      });
-    }
+    // Enviar correo de confirmación solo a la cafetería
+    await sendOrderConfirmationEmail(order, req.body.cafeteria_id);
 
-    // Enviar correo
-    await sendOrderConfirmationEmail(order, cafeteria_id);
-
-    res.json({ success: true, message: "Orden creada exitosamente", data: order });
+    res.json({ success: true, message: "Order created successfully", data: order });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Error al crear la orden" });
+    res.status(500).json({ success: false, message: "Error creating order" });
   }
 };
-
 
 // Obtener todas las órdenes filtradas por cafeteria_id
 const getOrdersByCafeteria = async (req, res) => {
