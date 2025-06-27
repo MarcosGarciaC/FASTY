@@ -122,7 +122,7 @@
 
 /* Tooltip para el botón deshabilitado */
 .add_minus-icons .fa-plus.disabled:hover::after {
-  content: "No se pueden agregar items de otras cafeterias";
+  content: "Item no disponible por el momento";
   position: absolute;
   bottom: 100%;
   right: 0;

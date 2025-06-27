@@ -12,20 +12,29 @@ const StoreContextProvider = (props) => {
   const [orderItems, setOrderItems] = useState([]);
 
   const addToCart = (food_id, cafeteria_id) => {
-    // Check if cart has items from a different cafeteria
     const currentCafeteriaId = orderItems.length > 0 ? orderItems[0].cafeteria_id : null;
     if (currentCafeteriaId && currentCafeteriaId !== cafeteria_id) {
-      alert("Solo puedes seleccionar items de una cafeteria a la vez. Por favor limpia tu carrito para añadir items de otra cafeteria.");
+      alert("Solo puedes seleccionar items de una cafetería a la vez.");
       return;
     }
 
-    // Update cartItems for compatibility with other components
+    const foodInfo = food_list.find(item => item._id === food_id);
+    if (!foodInfo?.is_available) {
+      alert("Este producto no está disponible.");
+      return;
+    }
+
+    const quantityInCart = cartItems[food_id] || 0;
+    if (quantityInCart >= foodInfo.daily_quantity) {
+      alert("Ya alcanzaste la cantidad máxima disponible para este producto hoy.");
+      return;
+    }
+
     setCartItems((prev) => ({
       ...prev,
-      [food_id]: (prev[food_id] || 0) + 1
+      [food_id]: quantityInCart + 1
     }));
 
-    // Update orderItems to maintain food_id, quantity, and cafeteria_id
     setOrderItems((prev) => {
       const existing = prev.find((item) => item.food_id === food_id);
       if (existing) {
@@ -39,6 +48,7 @@ const StoreContextProvider = (props) => {
       }
     });
   };
+
 
   const removeFromCart = (food_id) => {
     setCartItems((prev) => {
@@ -108,7 +118,7 @@ const StoreContextProvider = (props) => {
     loadData();
   }, []);
 
-  
+
 
   const contextValue = {
     food_list,
