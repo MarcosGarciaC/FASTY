@@ -9,13 +9,23 @@ const Cart = () => {
   const { cartItems, food_list, removeFromCart, getTotalCartAmount, url } = useContext(StoreContext);
   const navigate = useNavigate();
 
-  const getDefaultPickupTime = () => {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 16);
-    now.setSeconds(0);
-    now.setMilliseconds(0);
-    return now;
-  };
+const getDefaultPickupTime = () => {
+  const now = new Date();
+
+  // Obtener el tiempo de preparación más largo
+  const maxPreparationTime = Math.max(
+    ...food_list
+      .filter((item) => cartItems[item._id] > 0)
+      .map((item) => item.preparation_time || 0),
+    15 // al menos 15 minutos por defecto
+  );
+
+  now.setMinutes(now.getMinutes() + maxPreparationTime);
+  now.setSeconds(0);
+  now.setMilliseconds(0);
+  return now;
+};
+
 
   // Estados para los nuevos campos
   const [pickupTime, setPickupTime] = useState(getDefaultPickupTime());
@@ -30,25 +40,33 @@ const Cart = () => {
     return now.toISOString().slice(0, 16);
   };
 
-  // Validar el tiempo de recogida
-  const validatePickupTime = (time) => {
-    if (!time) {
-      setValidationError('Por favor seleccione una hora de retiro');
-      return false;
-    }
+const validatePickupTime = (time) => {
+  if (!time) {
+    setValidationError('Por favor seleccione una hora de retiro');
+    return false;
+  }
 
-    const selectedTime = new Date(time).getTime();
-    const minTime = new Date();
-    minTime.setMinutes(minTime.getMinutes() + 15);
+  const selectedTime = new Date(time).getTime();
+  const now = new Date();
 
-    if (selectedTime < minTime.getTime()) {
-      setValidationError('La hora de retiro debe ser al menos 15 min después de ahora');
-      return false;
-    }
+  // Obtener el tiempo de preparación más largo
+  const maxPreparationTime = Math.max(
+    ...food_list
+      .filter((item) => cartItems[item._id] > 0)
+      .map((item) => item.preparation_time || 0),
+    15
+  );
 
-    setValidationError('');
-    return true;
-  };
+  now.setMinutes(now.getMinutes() + maxPreparationTime);
+
+  if (selectedTime < now.getTime()) {
+    setValidationError(`La hora de retiro debe ser al menos ${maxPreparationTime} minutos desde ahora`);
+    return false;
+  }
+
+  setValidationError('');
+  return true;
+};
 
   // Manejar cambio en el tiempo de recogida
   const handlePickupTimeChange = (e) => {
