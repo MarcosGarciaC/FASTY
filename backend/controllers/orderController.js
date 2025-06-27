@@ -2,6 +2,7 @@ import orderModel from "../models/orderModel.js";
 import cafeteriaModel from "../models/cafetinModel.js"; // Importar el modelo de cafeteria
 import userModel from "../models/userModel.js"; // Importar el modelo de usuario
 import nodemailer from 'nodemailer';
+import foodModel from "../models/foodModel.js";
 
 // Configuración para enviar correo de confirmación de orden
 const sendOrderConfirmationEmail = async (order, cafeteriaId) => {
@@ -66,13 +67,29 @@ const sendOrderConfirmationEmail = async (order, cafeteriaId) => {
   await transporter.sendMail(cafeteriaMailOptions);
 };
 
-// Crear una nueva orden
 const createOrder = async (req, res) => {
   try {
+    const items = req.body.items;
+
+    // Validar disponibilidad antes de crear la orden
+    for (const item of items) {
+      const food = await foodModel.findById(item.food_id);
+      if (!food || !food.is_available) {
+        return res.status(400).json({ success: false, message: `El producto no está disponible.` });
+      }
+      if (food.daily_quantity < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `No hay suficiente cantidad de ${food.name}. Disponible: ${food.daily_quantity}, Solicitado: ${item.quantity}`
+        });
+      }
+    }
+
+    // Crear la orden
     const order = new orderModel({
       user_id: req.body.user_id,
       cafeteria_id: req.body.cafeteria_id,
-      items: req.body.items,
+      items,
       total_amount: req.body.total_amount,
       pickup_time: req.body.pickup_time,
       payment_method: req.body.payment_method,
@@ -83,13 +100,20 @@ const createOrder = async (req, res) => {
 
     await order.save();
 
-    // Enviar correo de confirmación solo a la cafetería
+    // Descontar cantidades del inventario
+    for (const item of items) {
+      await foodModel.findByIdAndUpdate(
+        item.food_id,
+        { $inc: { daily_quantity: -item.quantity } }
+      );
+    }
+
     await sendOrderConfirmationEmail(order, req.body.cafeteria_id);
 
-    res.json({ success: true, message: "Order created successfully", data: order });
+    res.json({ success: true, message: "Orden creada correctamente", data: order });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, message: "Error creating order" });
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error al crear la orden" });
   }
 };
 
