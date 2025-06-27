@@ -51,7 +51,7 @@ const List = ({ url }) => {
     try {
       const fd = new FormData();
       fd.append("id", formData._id);
-      ["name", "category", "price", "description", "is_available"].forEach(key => fd.append(key, formData[key]));
+      ["name", "category", "price", "description", "is_available", "preparation_time", "daily_quantity"].forEach(key => fd.append(key, formData[key]));
       fd.append("ingredients", JSON.stringify(formData.ingredients.split(",").map(s => s.trim())));
       if (imageFile) fd.append("image", imageFile);
 
@@ -71,23 +71,23 @@ const List = ({ url }) => {
     }
   };
 
-const removeFood = async (id) => {
-  const confirmed = window.confirm("¿Estás seguro que deseas eliminar este producto?");
-  if (!confirmed) return;
+  const removeFood = async (id) => {
+    const confirmed = window.confirm("¿Estás seguro que deseas eliminar este producto?");
+    if (!confirmed) return;
 
-  try {
-    const res = await axios.post(`${url}/api/food/remove`, { id });
-    if (res.data.success) {
-      toast.success(res.data.message);
-      fetchList();
-    } else {
+    try {
+      const res = await axios.post(`${url}/api/food/remove`, { id });
+      if (res.data.success) {
+        toast.success(res.data.message);
+        fetchList();
+      } else {
+        toast.error("Error deleting food");
+      }
+    } catch (e) {
+      console.error("Remove food error:", e);
       toast.error("Error deleting food");
     }
-  } catch (e) {
-    console.error("Remove food error:", e);
-    toast.error("Error deleting food");
-  }
-};
+  };
 
 
   const handleChange = (e, key) => {
@@ -156,6 +156,25 @@ const removeFood = async (id) => {
                   <div className="form-group">
                     <label>Ingredientes (opcional)</label>
                     <textarea value={formData.ingredients} onChange={(e) => handleChange(e, 'ingredients')} />
+                  </div>
+                  <div className="form-group">
+                    <label>Tiempo de preparación (minutos)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={formData.preparation_time || 0}
+                      onChange={(e) => handleChange(e, 'preparation_time')}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Cantidad diaria disponible</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={formData.daily_quantity || 0}
+                      onChange={(e) => handleChange(e, 'daily_quantity')}
+                    />
                   </div>
 
                   <div className="form-group checkbox-group">
